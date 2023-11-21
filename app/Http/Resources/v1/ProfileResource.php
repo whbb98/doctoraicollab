@@ -14,9 +14,9 @@ class ProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-//        return parent::toArray($request);
-        return [
-            'myCity'=> $this->city
-        ];
+        return parent::toArray($request);
+//        return [
+//            'myCity'=> $this->city
+//        ];
     }
 }

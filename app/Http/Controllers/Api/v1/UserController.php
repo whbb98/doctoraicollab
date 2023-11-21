@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         return 'store method!';
     }
 
     /**
@@ -40,7 +40,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        return 'update method!';
     }
 
     /**
@@ -48,6 +48,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        return 'destroy method!';
     }
 }
