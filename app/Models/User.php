@@ -16,6 +16,17 @@ class User extends Model
     public $incrementing = true;
     public $timestamps = false;
 
+    protected $fillable = [
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'phone',
+        'birth_date',
+        'joined',
+        'gender'
+    ];
 
     // start of relatioships>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
