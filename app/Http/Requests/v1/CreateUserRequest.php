@@ -26,22 +26,20 @@ class CreateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required','unique:user'],
-            'first_name' => ['required'],
-            'last_name' => ['required'],
-            'email' => ['required','unique:user'],
-            'password' => ['required','min:10'],
-            'phone' => ['required', 'unique:user'],
-            'birth_date' => ['required','date'],
+            'username' => ['required', 'unique:user', 'alpha_num:ascii'],
+            'first_name' => ['required', 'alpha:ascii'],
+            'last_name' => ['required', 'alpha:ascii'],
+            'email' => ['required', 'email', 'unique:user'],
+            'password' => ['required', 'min:5', 'max:20'],
+            'phone' => ['required', 'unique:user', 'digits:10'],
+            'birth_date' => ['required', 'date'],
             'gender' => ['required', Rule::in('M', 'F')],
         ];
     }
 
     public function messages()
     {
-        return [
-            'phone.unique' => 'The Phone Number is Already Exists, Try another one'
-        ];
+        return [];
     }
 
     protected function passedValidation()

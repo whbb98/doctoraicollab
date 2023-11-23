@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\CreateUserRequest;
+use App\Http\Requests\v1\UpdateUserRequest;
 use App\Models\Contact;
 use App\Models\NotificationSettings;
 use App\Models\Profile;
@@ -52,11 +53,9 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $method = $request->method();
-        return $method;
-//        return 'update method!';
+        $user->update($request->all());
     }
 
     /**
@@ -66,4 +65,13 @@ class UserController extends Controller
     {
         return 'destroy method!';
     }
+
+    public function login(){
+        return 'login method';
+    }
+
+    public function logout(){
+        return 'logout method';
+    }
+
 }
