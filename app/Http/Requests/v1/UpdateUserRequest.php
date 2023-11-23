@@ -30,7 +30,7 @@ class UpdateUserRequest extends FormRequest
                 'last_name' => ['sometimes', 'required', 'alpha:ascii'],
                 'email' => ['sometimes', 'required', 'email', 'unique:user'],
                 'password' => ['sometimes', 'required', 'min:5', 'max:20'],
-                'phone' => ['sometimes', 'required', 'unique:user', 'numeric'],
+                'phone' => ['sometimes', 'required', 'unique:user', 'digits:10'],
                 'birth_date' => ['sometimes', 'required', 'date'],
                 'gender' => ['sometimes', 'required', Rule::in('M', 'F')],
             ];
@@ -42,7 +42,6 @@ class UpdateUserRequest extends FormRequest
     public function messages()
     {
         return [
-            'phone.unique' => 'The Phone Number is Already Exists, Try another one'
         ];
     }
 

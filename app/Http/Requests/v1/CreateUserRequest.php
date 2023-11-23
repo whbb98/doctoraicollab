@@ -31,7 +31,7 @@ class CreateUserRequest extends FormRequest
             'last_name' => ['required', 'alpha:ascii'],
             'email' => ['required', 'email', 'unique:user'],
             'password' => ['required', 'min:5', 'max:20'],
-            'phone' => ['required', 'unique:user', 'numeric'],
+            'phone' => ['required', 'unique:user', 'digits:10'],
             'birth_date' => ['required', 'date'],
             'gender' => ['required', Rule::in('M', 'F')],
         ];
@@ -39,9 +39,7 @@ class CreateUserRequest extends FormRequest
 
     public function messages()
     {
-        return [
-            'phone.unique' => 'The Phone Number is Already Exists, Try another one'
-        ];
+        return [];
     }
 
     protected function passedValidation()
