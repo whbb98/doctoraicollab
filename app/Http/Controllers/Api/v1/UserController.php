@@ -65,4 +65,13 @@ class UserController extends Controller
     {
         return 'destroy method!';
     }
+
+    public function login(){
+        return 'login method';
+    }
+
+    public function logout(){
+        return 'logout method';
+    }
+
 }
