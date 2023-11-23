@@ -26,12 +26,12 @@ class CreateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'unique:user'],
-            'first_name' => ['required'],
-            'last_name' => ['required'],
+            'username' => ['required', 'unique:user', 'alpha_num:ascii'],
+            'first_name' => ['required', 'alpha:ascii'],
+            'last_name' => ['required', 'alpha:ascii'],
             'email' => ['required', 'email', 'unique:user'],
             'password' => ['required', 'min:5', 'max:20'],
-            'phone' => ['required', 'unique:user'],
+            'phone' => ['required', 'unique:user', 'numeric'],
             'birth_date' => ['required', 'date'],
             'gender' => ['required', Rule::in('M', 'F')],
         ];

@@ -25,12 +25,12 @@ class UpdateUserRequest extends FormRequest
     {
         if ($this->method() === 'PATCH') {
             return [
-                'username' => ['sometimes', 'required', 'unique:user'],
-                'first_name' => ['sometimes', 'required'],
-                'last_name' => ['sometimes', 'required'],
+                'username' => ['sometimes', 'required', 'unique:user', 'alpha_num:ascii'],
+                'first_name' => ['sometimes', 'required', 'alpha:ascii'],
+                'last_name' => ['sometimes', 'required', 'alpha:ascii'],
                 'email' => ['sometimes', 'required', 'email', 'unique:user'],
                 'password' => ['sometimes', 'required', 'min:5', 'max:20'],
-                'phone' => ['sometimes', 'required', 'unique:user'],
+                'phone' => ['sometimes', 'required', 'unique:user', 'numeric'],
                 'birth_date' => ['sometimes', 'required', 'date'],
                 'gender' => ['sometimes', 'required', Rule::in('M', 'F')],
             ];
