@@ -23,7 +23,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        if ($this->method() === 'PATCH') {
+        if ($this->method() == 'PATCH') {
             return [
                 'username' => ['sometimes', 'required', 'unique:user', 'alpha_num:ascii'],
                 'first_name' => ['sometimes', 'required', 'alpha:ascii'],
@@ -31,7 +31,7 @@ class UpdateUserRequest extends FormRequest
                 'email' => ['sometimes', 'required', 'email', 'unique:user'],
                 'password' => ['sometimes', 'required', 'min:5', 'max:20'],
                 'phone' => ['sometimes', 'required', 'unique:user', 'digits:10'],
-                'birth_date' => ['sometimes', 'required', 'date'],
+                'birth_date' => ['sometimes', 'required', 'date_format:Y-m-d'],
                 'gender' => ['sometimes', 'required', Rule::in('M', 'F')],
             ];
         } else {

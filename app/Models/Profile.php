@@ -12,18 +12,28 @@ require_once app_path('Helpers/constants.php');
 class Profile extends Model
 {
     use HasFactory;
+
     protected $table = 'profile';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
 
     protected $attributes = [
-        'bio' => 'Welcome to my profile',
+        'bio' => 'Welcome to my profile!',
         'city' => '31',
-        'hospital' => '0',
-        'other_hospital' => 'hospital unknown',
-        'occupation' => 'occupation',
-        'department' => '0'
+        'hospital' => 'your hospital',
+        'occupation' => 'your occupation',
+        'department' => 'your occupation'
+    ];
+
+    protected $fillable = [
+        'photo',
+        'cover',
+        'bio',
+        'city',
+        'hospital',
+        'occupation',
+        'department'
     ];
 
     public function user(): BelongsTo
