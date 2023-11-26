@@ -23,7 +23,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        if ($this->method() === 'PATCH') {
+        if ($this->method() == 'PATCH') {
             return [
                 'username' => ['sometimes', 'required', 'unique:user', 'alpha_num:ascii'],
                 'first_name' => ['sometimes', 'required', 'alpha:ascii'],

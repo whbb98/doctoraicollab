@@ -55,7 +55,12 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update($request->all());
+        if ($request->method() == 'PATCH') {
+            $user->update($request->all());
+        } else {
+            return 'PUT is not supported!';
+        }
+
     }
 
     /**
@@ -66,11 +71,13 @@ class UserController extends Controller
         return 'destroy method!';
     }
 
-    public function login(){
+    public function login()
+    {
         return 'login method';
     }
 
-    public function logout(){
+    public function logout()
+    {
         return 'logout method';
     }
 
