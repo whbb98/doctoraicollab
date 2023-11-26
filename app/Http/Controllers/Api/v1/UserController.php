@@ -20,7 +20,6 @@ class UserController extends Controller
      */
     public function index()
     {
-//        return User::all();
         return new UserCollection(User::paginate());
     }
 
@@ -57,8 +56,13 @@ class UserController extends Controller
     {
         if ($request->method() == 'PATCH') {
             $user->update($request->all());
+            return [
+                'success' => 'updated successfully!'
+            ];
         } else {
-            return 'PUT is not supported!';
+            return [
+                'error' => 'method is not supported!'
+            ];
         }
 
     }
@@ -68,7 +72,9 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        return 'destroy method!';
+        return [
+            'error' => 'method is not supported!'
+        ];
     }
 
     public function login()

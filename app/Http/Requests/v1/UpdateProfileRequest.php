@@ -21,8 +21,22 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        if ($this->method() == 'POST') {
+            return [
+                'photo' => ['sometimes', 'required', 'file'],
+                'cover' => ['sometimes', 'required', 'file'],
+                'bio' => ['sometimes', 'required', 'max:255'],
+                'city' => ['sometimes', 'required', 'integer', 'between:1,48'],
+                'hospital' => ['sometimes', 'required', 'max:255'],
+                'occupation' => ['sometimes', 'required', 'max:255'],
+                'department' => ['sometimes', 'required', 'max:255']
+            ];
+        } else {
+            return [];
+        }
+    }
+
+    protected function passedValidation()
+    {
     }
 }

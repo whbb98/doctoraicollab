@@ -27,6 +27,8 @@ class Profile extends Model
     ];
 
     protected $fillable = [
+        'photo',
+        'cover',
         'bio',
         'city',
         'hospital',
