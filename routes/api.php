@@ -20,9 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //Api/v1
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], function () {
-    Route::match('GET','/login',[\App\Http\Controllers\Api\v1\UserController::class,'login']);
-    Route::match('GET','/logout',[\App\Http\Controllers\Api\v1\UserController::class,'logout']);
-    Route::resource('users', \App\Http\Controllers\Api\v1\UserController::class);
-    Route::resource('profiles', \App\Http\Controllers\Api\v1\ProfileController::class);
-    Route::resource('blogs', \App\Http\Controllers\Api\v1\BlogController::class);
+    Route::match('GET', '/login', 'UserController@login');
+    Route::match('GET', '/logout', 'UserController@logout');
+    Route::resource('users', 'UserController');
+    Route::resource('profiles', 'ProfileController');
+    Route::resource('blogs', 'BlogController');
 });
