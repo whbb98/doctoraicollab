@@ -25,4 +25,5 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::resource('users', 'UserController');
     Route::resource('profiles', 'ProfileController');
     Route::resource('blogs', 'BlogController');
+    Route::resource('careers', 'CareerController');
 });

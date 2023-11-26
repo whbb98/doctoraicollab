@@ -10,11 +10,19 @@ use Illuminate\Http\Request;
 class Career extends Model
 {
     use HasFactory;
+
     protected $table = 'career';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
 
+    protected $fillable = [
+        'type',
+        'user_id',
+        'career_name',
+        'period',
+        'organization'
+    ];
 
     public function user(): BelongsTo
     {
@@ -29,6 +37,7 @@ class Career extends Model
         $this->organization = strip_tags($req->organization);
         return $this->save();
     }
+
     public function dropCareerRow($id)
     {
         return $this->delete();
