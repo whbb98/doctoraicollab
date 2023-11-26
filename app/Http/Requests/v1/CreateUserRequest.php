@@ -32,7 +32,7 @@ class CreateUserRequest extends FormRequest
             'email' => ['required', 'email', 'unique:user'],
             'password' => ['required', 'min:5', 'max:20'],
             'phone' => ['required', 'unique:user', 'digits:10'],
-            'birth_date' => ['required', 'date'],
+            'birth_date' => ['required', 'date_format:Y-m-d'],
             'gender' => ['required', Rule::in('M', 'F')],
         ];
     }
