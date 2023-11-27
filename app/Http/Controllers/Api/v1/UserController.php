@@ -35,9 +35,9 @@ class UserController extends Controller
         $contact = new Contact();
         $contact->user_id = $user->id;
         $contact->save();
-        $notificationSetting = new NotificationSettings();
-        $notificationSetting->user_id = $user->id;
-        $notificationSetting->save();
+        $notificationSettings = new NotificationSettings();
+        $notificationSettings->user_id = $user->id;
+        $notificationSettings->save();
         return new UserResource($user);
     }
 
