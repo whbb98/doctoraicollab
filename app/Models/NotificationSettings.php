@@ -10,10 +10,19 @@ use Illuminate\Http\Request;
 class NotificationSettings extends Model
 {
     use HasFactory;
+
     protected $table = 'notification_settings';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
+
+    protected $fillable = [
+        'new_follower',
+        'message_requests',
+        'blog_invitations',
+        'emails',
+        'sms'
+    ];
 
     public function user(): BelongsTo
     {
@@ -23,7 +32,7 @@ class NotificationSettings extends Model
     public function updateSettings($flags)
     {
         $this->followers = in_array("1", $flags);
-        $this->message_request = in_array("2", $flags);
+        $this->message_requests = in_array("2", $flags);
         $this->blog_invitations = in_array("3", $flags);
         $this->emails = in_array("4", $flags);
         $this->sms = in_array("5", $flags);
