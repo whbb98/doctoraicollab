@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class Contact extends Model
 {
     use HasFactory;
+
     protected $table = 'contact';
     protected $primaryKey = 'id';
     public $incrementing = true;
@@ -22,6 +23,15 @@ class Contact extends Model
         'to_day' => '5',
         'from_time' => '00:00',
         'to_time' => '00:00'
+    ];
+
+    protected $fillable = [
+        'phone',
+        'email',
+        'from_day',
+        'to_day',
+        'from_time',
+        'to_time'
     ];
 
     public function user(): BelongsTo
