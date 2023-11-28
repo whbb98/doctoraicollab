@@ -31,8 +31,12 @@ class CareerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Career $career)
+    public function show($id)
     {
+        $career = Career::find($id);
+        if (!$career) {
+            return new CareerResource([]);
+        }
         return new CareerResource($career);
     }
 
@@ -41,7 +45,7 @@ class CareerController extends Controller
      */
     public function update(UpdateCareerRequest $request, Career $career)
     {
-        if($request->method()=='PUT'){
+        if ($request->method() == 'PUT') {
             return [
                 'error' => 'method is not supported!'
             ];

@@ -14,6 +14,9 @@ class ContactResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if (!$this->resource) {
+            return [];
+        }
         return parent::toArray($request);
 //        return [
 //            'user_mail' => $this->email,

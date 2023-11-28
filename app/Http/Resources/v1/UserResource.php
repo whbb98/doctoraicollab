@@ -14,6 +14,9 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if (!$this->resource) {
+            return [];
+        }
         return parent::toArray($request);
 //        return [
 //          'fullName'=>$this->first_name . ' '.$this->last_name

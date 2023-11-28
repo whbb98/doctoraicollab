@@ -15,6 +15,9 @@ class ProfileResource extends JsonResource
     public function toArray(Request $request): array
     {
 //        return parent::toArray($request);
+        if (!$this->resource) {
+            return [];
+        }
         return [
             'photo' => $this->getPhoto(),
             'cover' => $this->getCover(),

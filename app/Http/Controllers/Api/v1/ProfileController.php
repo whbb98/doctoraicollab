@@ -44,8 +44,12 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Profile $profile)
+    public function show($id)
     {
+        $profile = Profile::find($id);
+        if (!$profile) {
+            return new ProfileResource([]);
+        }
         return new ProfileResource($profile);
     }
 

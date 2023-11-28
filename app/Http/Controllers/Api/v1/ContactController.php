@@ -34,8 +34,12 @@ class ContactController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Contact $contact)
+    public function show($id)
     {
+        $contact = Contact::find($id);
+        if (!$contact) {
+            return new ContactResource([]);
+        }
         return new ContactResource($contact);
     }
 
