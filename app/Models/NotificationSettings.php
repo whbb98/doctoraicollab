@@ -29,13 +29,13 @@ class NotificationSettings extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function updateSettings($flags)
-    {
-        $this->followers = in_array("1", $flags);
-        $this->message_requests = in_array("2", $flags);
-        $this->blog_invitations = in_array("3", $flags);
-        $this->emails = in_array("4", $flags);
-        $this->sms = in_array("5", $flags);
-        return $this->save();
-    }
+//    public function updateSettings($flags)
+//    {
+//        $this->followers = in_array("1", $flags);
+//        $this->message_requests = in_array("2", $flags);
+//        $this->blog_invitations = in_array("3", $flags);
+//        $this->emails = in_array("4", $flags);
+//        $this->sms = in_array("5", $flags);
+//        return $this->save();
+//    }
 }
