@@ -18,7 +18,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Api/v1
+//Api Routes V1
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], function () {
     Route::match('GET', '/login', 'UserController@login');
     Route::match('GET', '/logout', 'UserController@logout');
@@ -26,4 +26,5 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::resource('profiles', 'ProfileController');
     Route::resource('blogs', 'BlogController');
     Route::resource('careers', 'CareerController');
+    Route::resource('notificationSettings', 'NotificationSettingsController');
 });
