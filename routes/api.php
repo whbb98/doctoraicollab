@@ -27,5 +27,6 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::resource('blogs', 'BlogController');
     Route::resource('careers', 'CareerController');
     Route::resource('notificationSettings', 'NotificationSettingsController');
-    Route::resource('contacts','ContactController');
+    Route::resource('contacts', 'ContactController');
+    Route::resource('notifications', 'NotificationsController');
 });

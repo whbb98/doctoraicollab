@@ -5,7 +5,7 @@ namespace App\Http\Resources\v1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ContactResource extends JsonResource
+class NotificationsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,8 +19,11 @@ class ContactResource extends JsonResource
         }
         return parent::toArray($request);
 //        return [
-//            'user_mail' => $this->email,
-//            'user_phone' => $this->phone
+//            "id" => $this->id,
+//            "date" => $this->date,
+//            "notificationType" => $this->notification,
+//            "sender" => User::find($this->sender)->username,
+//            "receiver" => User::find($this->receiver)->username
 //        ];
     }
 }
