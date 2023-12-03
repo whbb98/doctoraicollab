@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\CreatePostRequest;
+use App\Http\Requests\v1\PostInteractionRequest;
 use App\Http\Requests\v1\UpdatePostRequest;
 use App\Http\Resources\v1\PostCollection;
 use App\Http\Resources\v1\PostResource;
 use App\Models\Post;
+use App\Models\PostInteractions;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -104,5 +107,35 @@ class PostController extends Controller
         return [
             'success' => 'post updated successfully!'
         ];
+    }
+
+    public function postInteraction(PostInteractionRequest $request)
+    {
+        $post = Post::find($request->post_id);
+        if (!$post) {
+            return [
+                'error' => 'post not found!'
+            ];
+        }
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return [
+                'error' => 'user not found!'
+            ];
+        }
+        $postInteraction = PostInteractions::where([
+            'user_id' => $user->id,
+            'post_id' => $post->id
+        ])->first();
+
+        if (!$postInteraction) {
+            $postInteraction = PostInteractions::create($request->all());
+        } else {
+            $postInteraction->update($request->except('user_id', 'post_id'));
+        }
+        return [
+            'success' => 'post interaction inserted successfully!'
+        ];
+
     }
 }
