@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\v1;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PostCommentRequest extends FormRequest
@@ -11,7 +12,7 @@ class PostCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,16 @@ class PostCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'post_id' => ['required', 'integer', 'min:1'],
+            'comment' => ['required', 'max:255'],
         ];
+    }
+
+    protected function passedValidation()
+    {
+        $this->merge([
+            'user_id' => 2,
+            'datetime' => Carbon::now()
+        ]);
     }
 }

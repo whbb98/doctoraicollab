@@ -32,4 +32,5 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::resource('posts', 'PostController');
     Route::match('POST', 'posts/updatePost', 'PostController@updatePost');
     Route::match('POST', 'posts/postInteraction', 'PostController@postInteraction');
+    Route::match('POST', 'posts/postComment', 'PostController@postComment');
 });
