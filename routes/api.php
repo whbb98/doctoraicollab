@@ -31,4 +31,5 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::resource('notifications', 'NotificationsController');
     Route::resource('posts', 'PostController');
     Route::match('POST', 'posts/updatePost', 'PostController@updatePost');
+    Route::match('POST', 'posts/postInteraction', 'PostController@postInteraction');
 });
