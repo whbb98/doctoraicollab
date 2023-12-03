@@ -15,6 +15,13 @@ class Post extends Model
     public $incrementing = true;
     public $timestamps = false;
 
+    protected $fillable = [
+        'datetime',
+        'visibility',
+        'description',
+        'user_id'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
