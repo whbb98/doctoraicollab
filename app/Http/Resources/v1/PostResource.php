@@ -21,7 +21,7 @@ class PostResource extends JsonResource
             'description' => $this->description,
             'user_id' => $this->user_id,
             'interactions' => $this->postInteractions,
-            'comments' => $this->postComments
+            'comments' => PostCommentResource::collection($this->postComments)
         ];
     }
 }
