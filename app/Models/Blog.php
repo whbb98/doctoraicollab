@@ -12,10 +12,21 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Blog extends Model
 {
     use HasFactory;
+
     protected $table = 'blog';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
+
+    protected $fillable = [
+        'title',
+        'description',
+        'created_on',
+        'has_meeting',
+        'user_id',
+        'patient_id',
+        'cover_image'
+    ];
 
     public function user(): BelongsTo
     {
@@ -113,7 +124,7 @@ class Blog extends Model
         $blogs = $user->blogs;
         $filteredBlogs = [];
         foreach ($blogs as $blog) {
-            $filtered =  [
+            $filtered = [
                 'blog_id' => $blog->id,
                 'title' => $blog->title,
                 'datetime' => Carbon::createFromFormat('Y-m-d H:i:s', $blog->datetime)->format('Y F d H:i'),
@@ -135,7 +146,7 @@ class Blog extends Model
         $blogs = Blog::whereIn('id', $blogIds)->get();
         $filteredBlogs = [];
         foreach ($blogs as $blog) {
-            $filtered =  [
+            $filtered = [
                 'blog_id' => $blog->id,
                 'title' => $blog->title,
                 'datetime' => Carbon::createFromFormat('Y-m-d H:i:s', $blog->datetime)->format('Y F d H:i'),

@@ -11,10 +11,18 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class BlogImages extends Model
 {
     use HasFactory;
+
     protected $table = 'blog_images';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
+
+    protected $fillable = [
+        'image_name',
+        'type',
+        'hash_key',
+        'image_binary'
+    ];
 
     public function blog(): BelongsTo
     {
