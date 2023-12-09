@@ -9,10 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BlogParticipate extends Model
 {
     use HasFactory;
+
     protected $table = 'blog_participate';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
+
+    protected $fillable = [
+        'blog_id',
+        'user_id',
+        'status'
+    ];
 
     public function blog(): BelongsTo
     {

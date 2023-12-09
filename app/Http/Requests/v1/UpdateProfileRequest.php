@@ -23,8 +23,8 @@ class UpdateProfileRequest extends FormRequest
     {
         if ($this->method() == 'POST') {
             return [
-                'photo' => ['sometimes', 'required', 'file'],
-                'cover' => ['sometimes', 'required', 'file'],
+                'photo' => ['sometimes', 'required', 'image', 'mimes:jpeg,png,jpg,gif','max:2048'],
+                'cover' => ['sometimes', 'required', 'image', 'mimes:jpeg,png,jpg,gif','max:2048'],
                 'bio' => ['sometimes', 'required', 'max:255'],
                 'city' => ['sometimes', 'required', 'integer', 'between:1,48'],
                 'hospital' => ['sometimes', 'required', 'max:255'],

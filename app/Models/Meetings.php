@@ -15,6 +15,11 @@ class Meetings extends Model
     public $incrementing = true;
     public $timestamps = false;
 
+    protected $fillable = [
+        'scheduled',
+        'link',
+        'duration'
+    ];
     public function blog(): BelongsTo
     {
         return $this->belongsTo(Blog::class);
