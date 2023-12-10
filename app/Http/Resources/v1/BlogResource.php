@@ -14,9 +14,19 @@ class BlogResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-//        return [
-//            'blogName' => $this->title
-//        ];
-        return parent::toArray($request);
+        if (!$this->resource) {
+            return [];
+        }
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'created_on' => $this->created_on,
+            'has_meeting' => $this->has_meeting,
+            'user_id' => $this->user_id,
+            'patient_id' => $this->patient_id,
+            'participants' => new BlogParticipantCollection($this->blogParticipants),
+//            'cover_image' => 'data:image/jpeg;base64,' . base64_encode($this->cover_image)
+        ];
     }
 }
