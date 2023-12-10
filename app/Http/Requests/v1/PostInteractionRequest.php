@@ -23,9 +23,8 @@ class PostInteractionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'post_id' => ['required', 'integer', 'min:1'],
-            'is_liked' => ['required', 'boolean'],
-            'is_shared' => ['required', 'boolean']
+            'is_liked' => ['sometimes', 'required', 'boolean'],
+            'is_shared' => ['sometimes', 'required', 'boolean']
         ];
     }
 

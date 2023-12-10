@@ -23,7 +23,7 @@ class PostCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'post_id' => ['required', 'integer', 'min:1'],
+            'comment_id' => ['sometimes', 'required', 'integer', 'min:1'],
             'comment' => ['required', 'max:255'],
         ];
     }

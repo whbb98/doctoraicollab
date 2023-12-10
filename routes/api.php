@@ -33,9 +33,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::resource('notifications', 'NotificationsController');
     // posts
     Route::resource('posts', 'PostController');
-    Route::match('POST', 'posts/updatePost', 'PostController@updatePost');
-    Route::match('POST', 'posts/postInteraction', 'PostController@postInteraction');
-    Route::match('POST', 'posts/postComment', 'PostController@postComment');
+    Route::match('POST', 'posts/{postID}/updatePost', 'PostController@updatePost');
+    Route::match('POST', 'posts/{postID}/postInteraction', 'PostController@postInteraction');
+    Route::match('POST', 'posts/{postID}/postComment', 'PostController@postComment');
     // blog
     Route::resource('blogs', 'BlogController');
     Route::match('POST', 'blogs/{blog}', 'BlogController@updateBlog');

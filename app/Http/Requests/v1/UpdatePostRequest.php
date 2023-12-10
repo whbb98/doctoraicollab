@@ -23,7 +23,6 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'post_id' => ['required', 'integer', 'min:1'],
             'visibility' => ['sometimes', 'required', 'boolean'],
             'description' => ['required', 'max:255'],
             'files.*' => ['sometimes', 'required', 'mimes:jpg,png,pdf,csv']
