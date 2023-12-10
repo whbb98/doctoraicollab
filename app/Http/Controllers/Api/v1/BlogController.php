@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\CreateBlogRequest;
 use App\Http\Requests\v1\UpdateBlogRequest;
 use App\Http\Resources\v1\BlogCollection;
-use App\Http\Resources\v1\BlogResource;
-use App\Http\Resources\v1\UserResource;
+use App\Http\Resources\v1\BlogDetailsResource;
 use App\Models\Blog;
 use App\Models\BlogImages;
 use App\Models\BlogParticipate;
-use App\Models\Meetings;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -144,9 +142,9 @@ class BlogController extends Controller
     {
         $blog = Blog::find($id);
         if (!$blog) {
-            return new BlogResource([]);
+            return new BlogDetailsResource([]);
         }
-        return new BlogResource($blog);
+        return new BlogDetailsResource($blog);
     }
 
     /**
@@ -171,7 +169,7 @@ class BlogController extends Controller
     {
         $blog = Blog::find($blogID);
         if (!$blog) {
-            return new BlogResource([]);
+            return new BlogDetailsResource([]);
         }
         $blogImage = BlogImages::find($imgID);
         if ($blogImage && $blogImage->blog_id === $blog->id) {
@@ -190,7 +188,7 @@ class BlogController extends Controller
     {
         $blog = Blog::find($blogID);
         if (!$blog) {
-            return new BlogResource([]);
+            return new BlogDetailsResource([]);
         }
         $user = User::where('username', $username)->first();
         if (!$user) {
