@@ -9,10 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserAnnotations extends Model
 {
     use HasFactory;
+
     protected $table = 'user_annotations';
     protected $primaryKey = 'id';
     public $incrementing = false;
     public $timestamps = false;
+
+    protected $fillable = [
+        'user_id',
+        'blog_id',
+        'image_id',
+        'annotation'
+    ];
 
     public function user(): BelongsTo
     {
