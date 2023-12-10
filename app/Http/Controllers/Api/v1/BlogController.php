@@ -198,11 +198,14 @@ class BlogController extends Controller
                 'error' => 'user not found!'
             ];
         }
-        $participant = array_filter($blog->blogParticipants->toArray(), function ($p) use ($user) {
-            return $p['user_id'] === $user->id;
-        });
+
+        $participant = BlogParticipate::where([
+            'blog_id' => $blog->id,
+            'user_id' => $user->id
+        ])->first();
+
         if ($participant) {
-            BlogParticipate::find($participant[0]['id'])->delete();
+            $participant->delete();
             return [
                 'success' => 'participant deleted successfully!'
             ];
