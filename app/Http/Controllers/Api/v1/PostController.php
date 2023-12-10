@@ -86,9 +86,9 @@ class PostController extends Controller
         ];
     }
 
-    public function updatePost(UpdatePostRequest $request)
+    public function updatePost($postID, UpdatePostRequest $request)
     {
-        $post = Post::find($request->post_id);
+        $post = Post::find($postID);
         if (!$post) {
             return [
                 'error' => 'post not found!'
@@ -111,9 +111,9 @@ class PostController extends Controller
         ];
     }
 
-    public function postInteraction(PostInteractionRequest $request)
+    public function postInteraction($postID, PostInteractionRequest $request)
     {
-        $post = Post::find($request->post_id);
+        $post = Post::find($postID);
         if (!$post) {
             return [
                 'error' => 'post not found!'
@@ -125,24 +125,29 @@ class PostController extends Controller
                 'error' => 'user not found!'
             ];
         }
-        $postInteraction = PostInteractions::where([
-            'user_id' => $user->id,
-            'post_id' => $post->id
-        ])->first();
+        if (isset($request->is_liked) || isset($request->is_shared)) {
+            $postInteraction = PostInteractions::where([
+                'user_id' => $user->id,
+                'post_id' => $post->id
+            ])->first();
 
-        if (!$postInteraction) {
-            $postInteraction = PostInteractions::create($request->all());
-        } else {
-            $postInteraction->update($request->except('user_id', 'post_id'));
+            if (!$postInteraction) {
+                $request->merge([
+                    'post_id' => $post->id
+                ]);
+                $postInteraction = PostInteractions::create($request->all());
+            } else {
+                $postInteraction->update($request->except('user_id', 'post_id'));
+            }
+            return [
+                'success' => 'post interaction inserted successfully!'
+            ];
         }
-        return [
-            'success' => 'post interaction inserted successfully!'
-        ];
     }
 
-    public function postComment(PostCommentRequest $request)
+    public function postComment($postID, PostCommentRequest $request)
     {
-        $post = Post::find($request->post_id);
+        $post = Post::find($postID);
         if (!$post) {
             return [
                 'error' => 'post not found!'
@@ -154,15 +159,21 @@ class PostController extends Controller
                 'error' => 'user not found!'
             ];
         }
-        $postComment = PostComments::where([
-            'user_id' => $user->id,
-            'post_id' => $post->id
-        ])->first();
+        $postComment = $request->comment_id ? PostComments::find($request->comment_id) : null;
 
         if (!$postComment) {
+            $request->merge([
+                'post_id' => $post->id
+            ]);
             $postComment = PostComments::create($request->all());
         } else {
-            $postComment->update($request->except('user_id', 'post_id'));
+            if ($user->id === $postComment->user_id) {
+                $postComment->update($request->except('user_id', 'post_id'));
+            } else {
+                return [
+                    'error' => 'permission denied!!'
+                ];
+            }
         }
         return [
             'success' => 'post comment inserted successfully!'
