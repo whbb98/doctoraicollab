@@ -5,7 +5,7 @@ namespace App\Http\Resources\v1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BlogResource extends JsonResource
+class BlogDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,11 +20,12 @@ class BlogResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'description' => $this->description,
             'created_on' => $this->created_on,
             'has_meeting' => $this->has_meeting,
             'user_id' => $this->user_id,
-            'participants' => count(new BlogParticipantCollection($this->blogParticipants)),
-//            'cover_image' => 'data:image/jpeg;base64,' . base64_encode($this->cover_image)
+            'patient_id' => $this->patient_id,
+            'participants' => new BlogParticipantCollection($this->blogParticipants),
         ];
     }
 }
