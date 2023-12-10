@@ -40,5 +40,6 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::resource('blogs', 'BlogController');
     Route::match('POST', 'blogs/{blog}', 'BlogController@updateBlog');
     Route::match('DELETE', 'blogs/{blogID}/images/{imgID}', 'BlogController@deleteBlogImage');
-    Route::match('DELETE', 'blogs/{blogID}/participants/{username}','BlogController@deleteParticipant');
+    Route::match('DELETE', 'blogs/{blogID}/participants/{username}', 'BlogController@deleteParticipant');
+    Route::match('POST', 'blogs/{blogID}/imageAnnotation', 'BlogController@ImageAnnotation');
 });
