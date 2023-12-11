@@ -42,4 +42,6 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::match('DELETE', 'blogs/{blogID}/images/{imgID}', 'BlogController@deleteBlogImage');
     Route::match('DELETE', 'blogs/{blogID}/participants/{username}', 'BlogController@deleteParticipant');
     Route::match('POST', 'blogs/{blogID}/imageAnnotation', 'BlogController@ImageAnnotation');
+    Route::match('POST', 'blogs/{blogID}/blogComment', 'BlogController@blogComment');
+    Route::match('DELETE', 'blogs/{blogID}/deleteComment', 'BlogController@deleteComment');
 });
