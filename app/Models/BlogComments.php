@@ -9,10 +9,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BlogComments extends Model
 {
     use HasFactory;
+
     protected $table = 'blog_comments';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
+
+    protected $fillable = [
+        'user_id',
+        'blog_id',
+        'replied_to',
+        'comment',
+        'datetime'
+    ];
 
     public function blog(): BelongsTo
     {

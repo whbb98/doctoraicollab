@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\v1\BlogCommentRequest;
+use App\Http\Requests\v1\BlogDeleteCommentRequest;
 use App\Http\Requests\v1\BlogImageAnnotationRequest;
 use App\Http\Requests\v1\CreateBlogRequest;
 use App\Http\Requests\v1\UpdateBlogRequest;
 use App\Http\Resources\v1\BlogCollection;
 use App\Http\Resources\v1\BlogDetailsResource;
 use App\Models\Blog;
+use App\Models\BlogComments;
 use App\Models\BlogImages;
 use App\Models\BlogParticipate;
 use App\Models\User;
@@ -262,6 +265,81 @@ class BlogController extends Controller
             $userAnnotation->update($request->except('image_id'));
             return [
                 'success' => 'annotation updated successfully!'
+            ];
+        }
+    }
+
+    public function blogComment($blogID, BlogCommentRequest $request)
+    {
+        $blog = Blog::find($blogID);
+        if (!$blog) {
+            return [
+                'error' => 'blog does not exist!'
+            ];
+        }
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return [
+                'error' => 'user does not exist!'
+            ];
+        }
+        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        if (!in_array($user->id, $participantsIDs)) {
+            return [
+                'error' => 'user does not have permission to participate!'
+            ];
+        }
+        $comment = BlogComments::find($request->comment_id);
+        if (!$comment) {
+            $request->merge([
+                'blog_id' => $blog->id
+            ]);
+            $comment = BlogComments::create($request->all());
+            return [
+                'success' => 'comment created successfully!'
+            ];
+        } else {
+            $comment->update($request->except('user_id', 'blog_id'));
+            return [
+                'success' => 'comment updated successfully!'
+            ];
+        }
+    }
+
+    public function deleteComment($blogID, BlogDeleteCommentRequest $request)
+    {
+        $blog = Blog::find($blogID);
+        if (!$blog) {
+            return [
+                'error' => 'blog does not exist!'
+            ];
+        }
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return [
+                'error' => 'user does not exist!'
+            ];
+        }
+        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        if (!in_array($user->id, $participantsIDs)) {
+            return [
+                'error' => 'user does not have permission to participate!'
+            ];
+        }
+        $comment = BlogComments::find($request->comment_id);
+        if ($comment) {
+            if ($comment->user_id != $user->id) {
+                return [
+                    'error' => 'Not authorized to delete!'
+                ];
+            }
+            $comment->delete();
+            return [
+                'success' => 'comment deleted successfully!'
+            ];
+        } else {
+            return [
+                'error' => 'comment not found!'
             ];
         }
     }
