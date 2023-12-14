@@ -32,9 +32,16 @@ class BlogFeedbackRequest extends FormRequest
 
     protected function passedValidation()
     {
+        $icd10_codes = App::make('icd10_codes');
+        $user_codes = $this->feedback_options;
+
+        $filteredData = array_filter($icd10_codes, function ($icd10) use ($user_codes) {
+            return in_array($icd10['id'], $user_codes);
+        });
+
         $this->merge([
             'user_id' => 2,
-            'labels' => array_values($this->feedback_options)
+            'labels' => array_values($filteredData)
         ]);
     }
 }

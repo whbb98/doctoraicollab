@@ -378,12 +378,12 @@ class BlogController extends Controller
         }
         $blog_feedback = $blog->blogFeedback;
         if (!$blog_feedback) {
-            $blog_feedback = $blog->blogFeedback()->create(['labels' => json_encode($request->labels)]);
+            $blog_feedback = $blog->blogFeedback()->create(['labels' => $request->labels]);
             return [
                 'success' => 'blog feedback created successfully!'
             ];
         } else {
-            $blog_feedback->update(['labels' => json_encode($request->labels)]);
+            $blog_feedback->update(['labels' => $request->labels]);
             return [
                 'success' => 'blog feedback updated successfully!'
             ];
