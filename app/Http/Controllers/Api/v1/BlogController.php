@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\BlogCommentRequest;
 use App\Http\Requests\v1\BlogDeleteCommentRequest;
+use App\Http\Requests\v1\BlogFeedbackRequest;
 use App\Http\Requests\v1\BlogImageAnnotationRequest;
 use App\Http\Requests\v1\CreateBlogRequest;
 use App\Http\Requests\v1\UpdateBlogRequest;
@@ -12,11 +13,13 @@ use App\Http\Resources\v1\BlogCollection;
 use App\Http\Resources\v1\BlogDetailsResource;
 use App\Models\Blog;
 use App\Models\BlogComments;
+use App\Models\BlogFeedback;
 use App\Models\BlogImages;
 use App\Models\BlogParticipate;
 use App\Models\User;
 use App\Models\UserAnnotations;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class BlogController extends Controller
 {
@@ -176,6 +179,12 @@ class BlogController extends Controller
         if (!$blog) {
             return new BlogDetailsResource([]);
         }
+
+//        if ($blog->user_id != $user->id) {
+//            return [
+//                'error' => 'access denied!'
+//            ];
+//        }
         $blogImage = BlogImages::find($imgID);
         if ($blogImage && $blogImage->blog_id === $blog->id) {
             $blogImage->delete();
@@ -201,7 +210,11 @@ class BlogController extends Controller
                 'error' => 'user not found!'
             ];
         }
-
+        if ($blog->user_id != $user->id) {
+            return [
+                'error' => 'access denied!'
+            ];
+        }
         $participant = BlogParticipate::where([
             'blog_id' => $blog->id,
             'user_id' => $user->id
@@ -343,4 +356,48 @@ class BlogController extends Controller
             ];
         }
     }
+
+    public function feedback($blogID, BlogFeedbackRequest $request)
+    {
+        $blog = Blog::find($blogID);
+        if (!$blog) {
+            return [
+                'error' => 'blog does not exist!'
+            ];
+        }
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return [
+                'error' => 'user does not exist!'
+            ];
+        }
+        if ($blog->user_id != $user->id) {
+            return [
+                'error' => 'access denied!'
+            ];
+        }
+        $blog_feedback = $blog->blogFeedback;
+        if (!$blog_feedback) {
+            $blog_feedback = $blog->blogFeedback()->create(['labels' => json_encode($request->labels)]);
+            return [
+                'success' => 'blog feedback created successfully!'
+            ];
+        } else {
+            $blog_feedback->update(['labels' => json_encode($request->labels)]);
+            return [
+                'success' => 'blog feedback updated successfully!'
+            ];
+        }
+    }
+
+    public function icd10AutoComplete(Request $request)
+    {
+        $query = strip_tags($request->query('q'));
+        $icd10_codes = App::make('icd10_codes');
+        $filteredData = array_filter($icd10_codes, function ($item) use ($query) {
+            return stripos($item['description'], $query);
+        });
+        return array_values($filteredData);
+    }
+
 }
