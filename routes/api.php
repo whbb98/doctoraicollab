@@ -46,4 +46,5 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
     Route::match('DELETE', 'blogs/{blogID}/deleteComment', 'BlogController@deleteComment');
     Route::match('POST', 'blogs/{blogID}/feedback', 'BlogController@feedback');
     Route::match('GET', 'blogs/{blogID}/icd10_auto_complete', 'BlogController@icd10AutoComplete');
+    Route::match('POST', 'blogs/{blogID}/feedback_vote', 'BlogController@feedbackVote');
 });

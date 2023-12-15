@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Models\Blog;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class BlogFeedbackVoteRequest extends FormRequest
 {
@@ -11,7 +14,7 @@ class BlogFeedbackVoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +24,18 @@ class BlogFeedbackVoteRequest extends FormRequest
      */
     public function rules(): array
     {
+        $feedback = Blog::find($this->route('blogID'))->blogFeedback;
+        $labels = array_map(fn($el) => $el['id'], json_decode($feedback->labels ?? '[]', true));
         return [
-            //
+            'answer' => ['required', Rule::in($labels)]
         ];
+    }
+
+    protected function passedValidation()
+    {
+        $this->merge([
+            'voted_by' => 3,
+            'datetime' => Carbon::now()
+        ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\BlogCommentRequest;
 use App\Http\Requests\v1\BlogDeleteCommentRequest;
 use App\Http\Requests\v1\BlogFeedbackRequest;
+use App\Http\Requests\v1\BlogFeedbackVoteRequest;
 use App\Http\Requests\v1\BlogImageAnnotationRequest;
 use App\Http\Requests\v1\CreateBlogRequest;
 use App\Http\Requests\v1\UpdateBlogRequest;
@@ -20,6 +21,7 @@ use App\Models\User;
 use App\Models\UserAnnotations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use function Laravel\Prompts\alert;
 
 class BlogController extends Controller
 {
@@ -378,12 +380,12 @@ class BlogController extends Controller
         }
         $blog_feedback = $blog->blogFeedback;
         if (!$blog_feedback) {
-            $blog_feedback = $blog->blogFeedback()->create(['labels' => $request->labels]);
+            $blog_feedback = $blog->blogFeedback()->create(['labels' => json_encode($request->labels)]);
             return [
                 'success' => 'blog feedback created successfully!'
             ];
         } else {
-            $blog_feedback->update(['labels' => $request->labels]);
+            $blog_feedback->update(['labels' => json_encode($request->labels)]);
             return [
                 'success' => 'blog feedback updated successfully!'
             ];
@@ -392,12 +394,48 @@ class BlogController extends Controller
 
     public function icd10AutoComplete(Request $request)
     {
+        //providing auto-complete from around 95623 code
         $query = strip_tags($request->query('q'));
         $icd10_codes = App::make('icd10_codes');
         $filteredData = array_filter($icd10_codes, function ($item) use ($query) {
             return stripos($item['description'], $query);
         });
         return array_values($filteredData);
+    }
+
+    public function feedbackVote($blogID, BlogFeedbackVoteRequest $request)
+    {
+        $blog = Blog::find($blogID);
+        if (!$blog) {
+            return [
+                'error' => 'blog does not exist!'
+            ];
+        }
+        $user = User::find($request->voted_by);
+        if (!$user) {
+            return [
+                'error' => 'user does not exist!'
+            ];
+        }
+        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        if (!in_array($user->id, $participantsIDs)) {
+            return [
+                'error' => 'user does not have permission to participate!'
+            ];
+        }
+        $feedback = Blog::find($request->route('blogID'))->blogFeedback;
+        $feedback_data = $feedback->feedbackData()->where('voted_by', $user->id)->first();
+        if (!$feedback_data) {
+            $feedback->feedbackData()->create($request->all());
+            return [
+                'success' => 'feedback voted created successfully!'
+            ];
+        } else {
+            $feedback_data->update($request->all());
+            return [
+                'success' => 'feedback voted updated successfully!'
+            ];
+        }
     }
 
 }

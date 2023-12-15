@@ -9,10 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BlogFeedbackData extends Model
 {
     use HasFactory;
+
     protected $table = 'blog_feedback_data';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
+
+    protected $fillable = [
+        'answer',
+        'datetime',
+        'voted_by'
+    ];
 
     public function blogFeedback(): BelongsTo
     {
