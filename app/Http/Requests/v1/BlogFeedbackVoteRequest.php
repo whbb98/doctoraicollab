@@ -34,7 +34,7 @@ class BlogFeedbackVoteRequest extends FormRequest
     protected function passedValidation()
     {
         $this->merge([
-            'voted_by' => 3,
+            'voted_by' => 4,
             'datetime' => Carbon::now()
         ]);
     }
