@@ -12,6 +12,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\v1\UserResource;
 use App\Http\Resources\v1\UserCollection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -81,14 +83,33 @@ class UserController extends Controller
         ];
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        return 'login method';
+        $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+        $user = User::where('username', $request->username)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return [
+                'error' => 'Invalid Credentials!'
+            ];
+        } else {
+            $token = $user->createToken('auth_token')->plainTextToken;
+            return [
+                'name' => $user->first_name . ' ' . $user->last_name,
+                'auth_token' => $token
+            ];
+        }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        return 'logout method';
+        $request->user()->tokens()->delete();
+        return [
+            'success' => 'You have successfully logged out! ' . auth()->user()->first_name
+        ];
     }
 
 }
