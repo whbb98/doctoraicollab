@@ -108,7 +108,7 @@ class UserController extends Controller
     {
         $request->user()->tokens()->delete();
         return [
-            'success' => 'You have successfully logged out! ' . auth()->user()->first_name
+            'success' => 'You have successfully logged out! ' . Auth::user()->first_name
         ];
     }
 
