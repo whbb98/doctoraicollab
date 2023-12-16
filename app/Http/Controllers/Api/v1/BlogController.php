@@ -9,6 +9,7 @@ use App\Http\Requests\v1\BlogFeedbackRequest;
 use App\Http\Requests\v1\BlogFeedbackVoteRequest;
 use App\Http\Requests\v1\BlogImageAnnotationRequest;
 use App\Http\Requests\v1\CreateBlogRequest;
+use App\Http\Requests\v1\ImagePredictionsRequest;
 use App\Http\Requests\v1\UpdateBlogRequest;
 use App\Http\Resources\v1\BlogCollection;
 use App\Http\Resources\v1\BlogDetailsResource;
@@ -17,6 +18,7 @@ use App\Models\BlogComments;
 use App\Models\BlogFeedback;
 use App\Models\BlogImages;
 use App\Models\BlogParticipate;
+use App\Models\MLPredictions;
 use App\Models\User;
 use App\Models\UserAnnotations;
 use Illuminate\Http\Request;
@@ -434,6 +436,39 @@ class BlogController extends Controller
             $feedback_data->update($request->all());
             return [
                 'success' => 'feedback voted updated successfully!'
+            ];
+        }
+    }
+
+    public function saveImagePredictions($blogID, ImagePredictionsRequest $request)
+    {
+        $blog = Blog::find($blogID);
+        if (!$blog) {
+            return [
+                'error' => 'blog does not exist!'
+            ];
+        }
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return [
+                'error' => 'user does not exist!'
+            ];
+        }
+        if ($blog->user_id != $user->id) {
+            return [
+                'error' => 'access denied!'
+            ];
+        }
+        $img_prediction = MLPredictions::where(['blog_id' => $blog->id, 'image_id' => $request->image_id])->first();
+        if (!$img_prediction) {
+            $blog->MLPredictions()->create($request->all());
+            return [
+                'success' => 'image predictions created successfully!'
+            ];
+        } else {
+            $img_prediction->update($request->all());
+            return [
+                'success' => 'image predictions updated successfully!'
             ];
         }
     }
