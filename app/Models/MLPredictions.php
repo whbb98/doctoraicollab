@@ -9,11 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MLPredictions extends Model
 {
     use HasFactory;
+
     protected $table = 'ml_predictions';
     protected $primaryKey = 'id';
     public $incrementing = false;
     public $timestamps = false;
 
+    protected $fillable = [
+        'blog_id',
+        'image_id',
+        'predictions',
+        'datetime'
+    ];
 
     public function blog(): BelongsTo
     {

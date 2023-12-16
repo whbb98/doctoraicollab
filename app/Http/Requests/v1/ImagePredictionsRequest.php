@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class BlogFeedbackVoteRequest extends FormRequest
+class ImagePredictionsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,17 +24,17 @@ class BlogFeedbackVoteRequest extends FormRequest
      */
     public function rules(): array
     {
-        $feedback = Blog::find($this->route('blogID'))->blogFeedback;
-        $labels = array_map(fn($el) => $el['id'], json_decode($feedback->labels ?? '[]', true));
+        $ids = Blog::find($this->route('blogID'))->blogImages->pluck('id');
         return [
-            'answer' => ['required', Rule::in($labels)]
+            'image_id' => ['required', Rule::in($ids)],
+            'predictions' => ['required', 'json']
         ];
     }
 
     protected function passedValidation()
     {
         $this->merge([
-            'voted_by' => 3,
+            'user_id' => 2,
             'datetime' => Carbon::now()
         ]);
     }
