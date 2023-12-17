@@ -5,16 +5,23 @@ namespace App\Http\Requests\v1;
 use App\Models\Blog;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class ImagePredictionsRequest extends FormRequest
 {
+    private $blog;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        $this->blog = Blog::find($this->route('blogID'));
+        if (!$this->blog) {
+            return false;
+        }
+        return $this->blog->user_id == Auth::user()->id;
     }
 
     /**
@@ -24,7 +31,7 @@ class ImagePredictionsRequest extends FormRequest
      */
     public function rules(): array
     {
-        $ids = Blog::find($this->route('blogID'))->blogImages->pluck('id');
+        $ids = $this->blog->blogImages->pluck('id');
         return [
             'image_id' => ['required', Rule::in($ids)],
             'predictions' => ['required', 'json']
@@ -34,7 +41,6 @@ class ImagePredictionsRequest extends FormRequest
     protected function passedValidation()
     {
         $this->merge([
-            'user_id' => 2,
             'datetime' => Carbon::now()
         ]);
     }

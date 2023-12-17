@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Models\Blog;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UpdateBlogRequest extends FormRequest
@@ -13,7 +15,8 @@ class UpdateBlogRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $blog = Blog::find($this->route('blogID'));
+        return $blog?->user_id == Auth::user()->id;
     }
 
     /**
@@ -42,11 +45,4 @@ class UpdateBlogRequest extends FormRequest
         ];
     }
 
-    protected function passedValidation()
-    {
-//        $this->merge([
-//            'user_id' => 2,
-//            'created_on' => Carbon::now(),
-//        ]);
-    }
 }

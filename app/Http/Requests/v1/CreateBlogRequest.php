@@ -4,6 +4,7 @@ namespace App\Http\Requests\v1;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class CreateBlogRequest extends FormRequest
@@ -38,14 +39,18 @@ class CreateBlogRequest extends FormRequest
             'link' => ['required_if:has_meeting,true', 'url:https'],
             'duration' => ['required_if:has_meeting,true', 'integer', 'min:15'],
             'patient_id' => ['sometimes', 'required', 'integer', 'min:1'],
-            'participants' => ['required','array','min:1',Rule::exists('User','username')]
+            'participants' => [
+                'required', 'array', 'min:1',
+                Rule::exists('User', 'username')
+                    ->whereNot('username', Auth::user()->username)
+            ]
         ];
     }
 
     protected function passedValidation()
     {
         $this->merge([
-            'user_id' => 2,
+            'user_id' => Auth::user()->id,
             'created_on' => Carbon::now(),
         ]);
     }

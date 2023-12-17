@@ -5,6 +5,7 @@ namespace App\Http\Requests\v1;
 use App\Models\Blog;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class BlogFeedbackVoteRequest extends FormRequest
@@ -12,9 +13,17 @@ class BlogFeedbackVoteRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
+    private $blog;
+    private $participantsIDs;
+
     public function authorize(): bool
     {
-        return true;
+        $this->blog = Blog::find($this->route('blogID'));
+        if (!$this->blog) {
+            return false;
+        }
+        $this->participantsIDs = array_map(fn($p) => $p['user_id'], $this->blog->blogParticipants->toArray());
+        return in_array(Auth::user()->id, $this->participantsIDs);
     }
 
     /**
@@ -24,7 +33,7 @@ class BlogFeedbackVoteRequest extends FormRequest
      */
     public function rules(): array
     {
-        $feedback = Blog::find($this->route('blogID'))->blogFeedback;
+        $feedback = $this->blog->blogFeedback;
         $labels = array_map(fn($el) => $el['id'], json_decode($feedback->labels ?? '[]', true));
         return [
             'answer' => ['required', Rule::in($labels)]
@@ -34,7 +43,7 @@ class BlogFeedbackVoteRequest extends FormRequest
     protected function passedValidation()
     {
         $this->merge([
-            'voted_by' => 3,
+            'voted_by' => Auth::user()->id,
             'datetime' => Carbon::now()
         ]);
     }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class BlogFeedbackRequest extends FormRequest
@@ -13,7 +15,11 @@ class BlogFeedbackRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // will be true only for blog author
+        $blog = Blog::find($this->route('blogID'));
+        if (!$blog) {
+            return false;
+        }
+        return $blog->user_id == Auth::user()->id;
     }
 
     /**
@@ -40,7 +46,7 @@ class BlogFeedbackRequest extends FormRequest
         });
 
         $this->merge([
-            'user_id' => 2,
+            'user_id' => Auth::user()->id,
             'labels' => array_values($filteredData)
         ]);
     }
