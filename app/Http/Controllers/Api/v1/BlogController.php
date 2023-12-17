@@ -23,6 +23,7 @@ use App\Models\User;
 use App\Models\UserAnnotations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use function Laravel\Prompts\alert;
 
 class BlogController extends Controller
@@ -32,7 +33,12 @@ class BlogController extends Controller
      */
     public function index()
     {
-        return new BlogCollection(Blog::paginate());
+        $user = Auth::user();
+        $blog_ids = $user->blogParticipations->pluck('blog_id')->toArray();
+        $blogs = Blog::whereIn('id', $blog_ids)
+            ->orderBy('created_on', 'desc')
+            ->paginate();
+        return new BlogCollection($blogs);
     }
 
     /**
@@ -71,12 +77,22 @@ class BlogController extends Controller
         if ($participants) {
             foreach ($participants as $username) {
                 $user = User::where('username', $username)->first();
+                //Skipping the owner as a participant!
+                if (Auth::user()->id == $user->id) {
+                    continue;
+                }
                 BlogParticipate::create([
                     'blog_id' => $blog->id,
                     'user_id' => $user->id
                 ]);
             }
         }
+        //Adding the owner as a participant!
+        BlogParticipate::create([
+            'blog_id' => $blog->id,
+            'user_id' => Auth::user()->id,
+            'status' => 1
+        ]);
         return [
             'success' => 'blog inserted successfully!'
         ];
@@ -156,6 +172,12 @@ class BlogController extends Controller
         if (!$blog) {
             return new BlogDetailsResource([]);
         }
+        $participants = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        if (!in_array(Auth::user()->id, $participants)) {
+            return [
+                'error' => 'blog access denied!'
+            ];
+        }
         return new BlogDetailsResource($blog);
     }
 
@@ -183,12 +205,11 @@ class BlogController extends Controller
         if (!$blog) {
             return new BlogDetailsResource([]);
         }
-
-//        if ($blog->user_id != $user->id) {
-//            return [
-//                'error' => 'access denied!'
-//            ];
-//        }
+        if ($blog->user_id != Auth::user()->id) {
+            return [
+                'error' => 'access denied!'
+            ];
+        }
         $blogImage = BlogImages::find($imgID);
         if ($blogImage && $blogImage->blog_id === $blog->id) {
             $blogImage->delete();
@@ -197,7 +218,7 @@ class BlogController extends Controller
             ];
         } else {
             return [
-                'error' => 'Not Found!!'
+                'error' => 'image not found!!'
             ];
         }
     }
@@ -214,7 +235,7 @@ class BlogController extends Controller
                 'error' => 'user not found!'
             ];
         }
-        if ($blog->user_id != $user->id) {
+        if ($blog->user_id != Auth::user()->id || Auth::user()->id == $user->id) {
             return [
                 'error' => 'access denied!'
             ];
@@ -223,7 +244,6 @@ class BlogController extends Controller
             'blog_id' => $blog->id,
             'user_id' => $user->id
         ])->first();
-
         if ($participant) {
             $participant->delete();
             return [
@@ -244,16 +264,10 @@ class BlogController extends Controller
                 'error' => 'blog does not exist!'
             ];
         }
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return [
-                'error' => 'user does not exist!'
-            ];
-        }
         $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
-        if (!in_array($user->id, $participantsIDs)) {
+        if (!in_array(Auth::user()->id, $participantsIDs)) {
             return [
-                'error' => 'user does not have permission to participate!'
+                'error' => 'access denied!'
             ];
         }
         $blogImagesIDs = array_map(fn($obj) => $obj['id'], $blog->blogImages->toArray());
@@ -263,14 +277,14 @@ class BlogController extends Controller
             ];
         }
         $userAnnotation = UserAnnotations::where([
-            'user_id' => $user->id,
+            'user_id' => Auth::user()->id,
             'blog_id' => $blog->id,
             'image_id' => $request->image_id
         ])->first();
 
         if (!$userAnnotation) {
             UserAnnotations::create([
-                'user_id' => $user->id,
+                'user_id' => Auth::user()->id,
                 'blog_id' => $blog->id,
                 'image_id' => $request->image_id,
                 'annotation' => $request->annotation
@@ -292,18 +306,6 @@ class BlogController extends Controller
         if (!$blog) {
             return [
                 'error' => 'blog does not exist!'
-            ];
-        }
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return [
-                'error' => 'user does not exist!'
-            ];
-        }
-        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
-        if (!in_array($user->id, $participantsIDs)) {
-            return [
-                'error' => 'user does not have permission to participate!'
             ];
         }
         $comment = BlogComments::find($request->comment_id);
@@ -331,23 +333,11 @@ class BlogController extends Controller
                 'error' => 'blog does not exist!'
             ];
         }
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return [
-                'error' => 'user does not exist!'
-            ];
-        }
-        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
-        if (!in_array($user->id, $participantsIDs)) {
-            return [
-                'error' => 'user does not have permission to participate!'
-            ];
-        }
         $comment = BlogComments::find($request->comment_id);
         if ($comment) {
-            if ($comment->user_id != $user->id) {
+            if ($comment->user_id != Auth::user()->id || $comment->blog_id != $blog->id) {
                 return [
-                    'error' => 'Not authorized to delete!'
+                    'error' => 'access denied!'
                 ];
             }
             $comment->delete();
@@ -367,17 +357,6 @@ class BlogController extends Controller
         if (!$blog) {
             return [
                 'error' => 'blog does not exist!'
-            ];
-        }
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return [
-                'error' => 'user does not exist!'
-            ];
-        }
-        if ($blog->user_id != $user->id) {
-            return [
-                'error' => 'access denied!'
             ];
         }
         $blog_feedback = $blog->blogFeedback;
@@ -413,29 +392,17 @@ class BlogController extends Controller
                 'error' => 'blog does not exist!'
             ];
         }
-        $user = User::find($request->voted_by);
-        if (!$user) {
-            return [
-                'error' => 'user does not exist!'
-            ];
-        }
-        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
-        if (!in_array($user->id, $participantsIDs)) {
-            return [
-                'error' => 'user does not have permission to participate!'
-            ];
-        }
-        $feedback = Blog::find($request->route('blogID'))->blogFeedback;
-        $feedback_data = $feedback->feedbackData()->where('voted_by', $user->id)->first();
+        $feedback = $blog->blogFeedback;
+        $feedback_data = $feedback->feedbackData()->where('voted_by', Auth::user()->id)->first();
         if (!$feedback_data) {
             $feedback->feedbackData()->create($request->all());
             return [
-                'success' => 'feedback voted created successfully!'
+                'success' => 'feedback vote created successfully!'
             ];
         } else {
             $feedback_data->update($request->all());
             return [
-                'success' => 'feedback voted updated successfully!'
+                'success' => 'feedback vote updated successfully!'
             ];
         }
     }
@@ -448,25 +415,14 @@ class BlogController extends Controller
                 'error' => 'blog does not exist!'
             ];
         }
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return [
-                'error' => 'user does not exist!'
-            ];
-        }
-        if ($blog->user_id != $user->id) {
-            return [
-                'error' => 'access denied!'
-            ];
-        }
-        $img_prediction = MLPredictions::where(['blog_id' => $blog->id, 'image_id' => $request->image_id])->first();
-        if (!$img_prediction) {
+        $img_predictions = MLPredictions::where(['blog_id' => $blog->id, 'image_id' => $request->image_id])->first();
+        if (!$img_predictions) {
             $blog->MLPredictions()->create($request->all());
             return [
                 'success' => 'image predictions created successfully!'
             ];
         } else {
-            $img_prediction->update($request->all());
+            $img_predictions->update($request->all());
             return [
                 'success' => 'image predictions updated successfully!'
             ];

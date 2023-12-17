@@ -26,12 +26,14 @@ class BlogDetailsResource extends JsonResource
             'user_id' => $this->user_id,
             'patient_id' => $this->patient_id,
             'participants' => new BlogParticipantCollection($this->blogParticipants),
+            'annotations' => $this->annotations,
             'feedback' => [
-                'id' => $this->blogFeedback->id,
-                'labels' => $this->blogFeedback->labels,
-                'votes' => $this->blogFeedback->feedbackData
+                'id' => $this->blogFeedback?->id,
+                'labels' => $this->blogFeedback?->labels,
+                'votes' => $this->blogFeedback?->feedbackData
             ],
-            'ml_predictions' => $this->MLPredictions
+            'ml_predictions' => $this->MLPredictions,
+            'comments' => $this->blogComments
         ];
     }
 }

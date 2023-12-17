@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Models\Blog;
 use App\Models\BlogImages;
 use App\Models\UserAnnotations;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class BlogImageAnnotationRequest extends FormRequest
@@ -14,7 +16,9 @@ class BlogImageAnnotationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $blog = Blog::find($this->route('blogID'));
+        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        return in_array(Auth::user()->id, $participantsIDs);
     }
 
     /**
@@ -28,12 +32,5 @@ class BlogImageAnnotationRequest extends FormRequest
             'image_id' => ['required', 'integer', Rule::exists('blog_images', 'id')],
             'annotation' => ['required', 'json']
         ];
-    }
-
-    protected function passedValidation()
-    {
-        $this->merge([
-            'user_id' => 2
-        ]);
     }
 }

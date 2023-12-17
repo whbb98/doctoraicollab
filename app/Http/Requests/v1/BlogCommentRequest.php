@@ -5,6 +5,7 @@ namespace App\Http\Requests\v1;
 use App\Models\Blog;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class BlogCommentRequest extends FormRequest
@@ -12,9 +13,16 @@ class BlogCommentRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
+    private $participantsIDs;
+
     public function authorize(): bool
     {
-        return true;
+        $blog = Blog::find($this->route('blogID'));
+        if (!$blog) {
+            return false;
+        }
+        $this->participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        return in_array(Auth::user()->id, $this->participantsIDs);
     }
 
     /**
@@ -24,19 +32,17 @@ class BlogCommentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $participantsIDs = array_map(fn($p) => $p['user_id'], Blog::find($this->route('blogID'))->blogParticipants->toArray());
-
         return [
-            'comment_id' => ['sometimes', 'required', Rule::exists('blog_comments','id')],
+            'comment_id' => ['sometimes', 'required', Rule::exists('blog_comments', 'id')],
             'comment' => ['required', 'max:255'],
-            'replied_to' => ['sometimes', 'required', Rule::in($participantsIDs)]
+            'replied_to' => ['sometimes', 'required', Rule::in($this->participantsIDs)]
         ];
     }
 
     protected function passedValidation()
     {
         $this->merge([
-            'user_id' => 3,
+            'user_id' => Auth::user()->id,
             'comment' => strip_tags($this->comment),
             'datetime' => Carbon::now(),
         ]);

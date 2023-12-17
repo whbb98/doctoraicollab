@@ -2,17 +2,26 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class BlogDeleteCommentRequest extends FormRequest
 {
+    private $participantsIDs;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        $blog = Blog::find($this->route('blogID'));
+        if (!$blog) {
+            return false;
+        }
+        $this->participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        return in_array(Auth::user()->id, $this->participantsIDs);
     }
 
     /**
@@ -25,12 +34,5 @@ class BlogDeleteCommentRequest extends FormRequest
         return [
             'comment_id' => ['required', Rule::exists('blog_comments', 'id')]
         ];
-    }
-
-    protected function passedValidation()
-    {
-        $this->merge([
-            'user_id' => 2
-        ]);
     }
 }
