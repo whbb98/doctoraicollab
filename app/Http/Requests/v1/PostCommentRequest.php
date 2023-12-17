@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Models\Post;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class PostCommentRequest extends FormRequest
 {
@@ -12,7 +14,9 @@ class PostCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $post = Post::find($this->route('postID'));
+        $user = Auth::user();
+        return $post?->user_id == $user->id || $post?->visibility;
     }
 
     /**
@@ -31,7 +35,7 @@ class PostCommentRequest extends FormRequest
     protected function passedValidation()
     {
         $this->merge([
-            'user_id' => 2,
+            'user_id' => Auth::user()->id,
             'datetime' => Carbon::now()
         ]);
     }

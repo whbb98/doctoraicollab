@@ -49,14 +49,14 @@ class User extends Authenticatable
 
     public function sentRequests()
     {
-        return $this->belongsToMany(User::class, 'user_networks', 'sender', 'receiver')
+        return $this->belongsToMany(User::class, 'user_network', 'sender', 'receiver')
             ->withPivot('status')
             ->wherePivot('status', 1);
     }
 
     public function receivedRequests()
     {
-        return $this->belongsToMany(User::class, 'user_networks', 'receiver', 'sender')
+        return $this->belongsToMany(User::class, 'user_network', 'receiver', 'sender')
             ->withPivot('status')
             ->wherePivot('status', 1);
     }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Models\Post;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdatePostRequest extends FormRequest
 {
@@ -12,7 +14,9 @@ class UpdatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        $post = Post::find(($this->route('postID')));
+        return $user->id == $post?->user_id;
     }
 
     /**
@@ -36,7 +40,7 @@ class UpdatePostRequest extends FormRequest
         }
         $this->merge([
             'datetime' => Carbon::now(),
-            'user_id' => 2// will be replaced by sanctum user
+            'user_id' => Auth::user()->id
         ]);
     }
 }

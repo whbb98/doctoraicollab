@@ -6,7 +6,7 @@ use App\Models\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProfileResource extends JsonResource
+class ProfileDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,10 +21,14 @@ class ProfileResource extends JsonResource
         return [
             'user' => new UserResource($this->user),
             'photo' => $this->getPhoto(),
+            'cover' => $this->getCover(),
+            'bio' => $this->bio,
             'city' => Helper::$dz_cities[$this->city],
             'hospital' => $this->hospital,
             'department' => $this->department,
-            'occupation'=>$this->occupation
+            'occupation' => $this->occupation,
+            'career' => $this->user->career->makeHidden(['id', 'user_id']),
+            'contact' => $this->user->contact->makeHidden(['id', 'user_id'])
         ];
     }
 }

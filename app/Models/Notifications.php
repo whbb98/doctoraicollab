@@ -16,16 +16,16 @@ class Notifications extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'date',
+        'datetime',
         'notification',
         'read_status',
         'sender',
         'receiver'
     ];
     public static $types = [
-        'following' => 'you have new follower: user',
-        'blogInvitation' => 'user sent you a blog invitation to participate',
-        'blogJoined' => 'user accepted your blog invitation'
+        'following' => 'started following you.',
+        'blogInvitation' => 'sent you a blog participation request.',
+        'blogJoined' => 'accepted your blog participation request.'
     ];
 
     //Relationships

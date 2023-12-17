@@ -3,6 +3,7 @@
 namespace App\Http\Resources\v1;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,7 +22,7 @@ class PostCommentResource extends JsonResource
             'comment' => $this->comment,
             'user' => $user->username,
             'fullName' => $user->first_name . ' ' . $user->last_name,
-            'datetime' => $this->datetime
+            'datetime' => Carbon::parse($this->datetime)->format('Y-M-d H:i')
         ];
     }
 }

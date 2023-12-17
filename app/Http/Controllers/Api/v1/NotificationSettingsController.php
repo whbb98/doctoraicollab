@@ -7,6 +7,7 @@ use App\Http\Requests\v1\UpdateNotificationSettingsRequest;
 use App\Models\NotificationSettings;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationSettingsController extends Controller
 {
@@ -15,7 +16,7 @@ class NotificationSettingsController extends Controller
      */
     public function index()
     {
-        return User::find(2)->notificationSettings;
+        return Auth::user()->notificationSettings;
     }
 
     /**
@@ -41,8 +42,7 @@ class NotificationSettingsController extends Controller
     public function update(UpdateNotificationSettingsRequest $request)
     {
         if ($request->method() == 'PATCH') {
-//            return $request->all();
-            User::find(2)->notificationSettings->update($request->all());
+            Auth::user()->notificationSettings->update($request->all());
             return [
                 'success' => 'updated successfully!'
             ];

@@ -14,6 +14,7 @@ use App\Models\PostComments;
 use App\Models\PostInteractions;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -22,7 +23,12 @@ class PostController extends Controller
      */
     public function index()
     {
-        return new PostCollection(Post::paginate());
+        return new PostCollection(
+            Auth::user()
+                ->posts()
+                ->orderBy('datetime', 'desc')
+                ->paginate()
+        );
     }
 
     /**
@@ -51,9 +57,15 @@ class PostController extends Controller
      */
     public function show($id)
     {
+        $user = Auth::user();
         $post = Post::find($id);
         if (!$post) {
             return new PostResource([]);
+        }
+        if (!$post->visibility && $user->id != $post->user_id) {
+            return [
+                'error' => 'post visibility is hidden by the author!'
+            ];
         }
         return new PostResource($post);
     }
@@ -73,7 +85,13 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
+        $user = Auth::user();
         $post = Post::find($id);
+        if ($post && $post->user_id != $user->id) {
+            return [
+                'error' => 'permission denied!'
+            ];
+        }
         if (!$post) {
             return [
                 'error' => 'post not found!'
@@ -119,29 +137,23 @@ class PostController extends Controller
                 'error' => 'post not found!'
             ];
         }
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return [
-                'error' => 'user not found!'
-            ];
-        }
+        $user = Auth::user();
         if (isset($request->is_liked) || isset($request->is_shared)) {
             $postInteraction = PostInteractions::where([
                 'user_id' => $user->id,
                 'post_id' => $post->id
             ])->first();
-
             if (!$postInteraction) {
-                $request->merge([
-                    'post_id' => $post->id
-                ]);
-                $postInteraction = PostInteractions::create($request->all());
+                $postInteraction = $post->PostInteractions()->create($request->all());
+                return [
+                    'success' => 'post interaction created successfully!'
+                ];
             } else {
                 $postInteraction->update($request->except('user_id', 'post_id'));
+                return [
+                    'success' => 'post interaction updated successfully!'
+                ];
             }
-            return [
-                'success' => 'post interaction inserted successfully!'
-            ];
         }
     }
 
@@ -153,30 +165,20 @@ class PostController extends Controller
                 'error' => 'post not found!'
             ];
         }
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return [
-                'error' => 'user not found!'
-            ];
-        }
-        $postComment = $request->comment_id ? PostComments::find($request->comment_id) : null;
-
+        $user = Auth::user();
+        $postComment = $request->comment_id ? $post->PostComments()->find($request->comment_id) : null;
         if (!$postComment) {
-            $request->merge([
-                'post_id' => $post->id
-            ]);
-            $postComment = PostComments::create($request->all());
+            $postComment = $post->postComments()->create($request->all());
+            return [
+                'success' => 'post comment created successfully!'
+            ];
         } else {
-            if ($user->id === $postComment->user_id) {
+            if ($user->id == $postComment->user_id) {
                 $postComment->update($request->except('user_id', 'post_id'));
-            } else {
                 return [
-                    'error' => 'permission denied!!'
+                    'success' => 'post comment updated successfully!'
                 ];
             }
         }
-        return [
-            'success' => 'post comment inserted successfully!'
-        ];
     }
 }
