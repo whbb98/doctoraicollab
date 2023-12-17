@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ContactUpdateRequest;
-use App\Http\Resources\v1\ContactCollection;
-use App\Http\Resources\v1\ContactResource;
 use App\Models\Contact;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
@@ -16,7 +14,7 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return new ContactCollection(Contact::paginate());
+        return Auth::user()->contact;
     }
 
     /**
@@ -24,29 +22,24 @@ class ContactController extends Controller
      */
     public function store(ContactUpdateRequest $request)
     {
-        $contact = Contact::find(1);
+        $contact = Auth::user()->contact;
         $contact->update($request->all());
         return [
-            'success' => 'inserted successfully!'
+            'success' => 'updated successfully!'
         ];
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show()
     {
-        $contact = Contact::find($id);
-        if (!$contact) {
-            return new ContactResource([]);
-        }
-        return new ContactResource($contact);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Contact $contact)
+    public function update()
     {
         return [
             'error' => 'method is not supported!'

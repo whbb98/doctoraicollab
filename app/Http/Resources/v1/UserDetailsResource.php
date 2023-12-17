@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class UserDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,12 +19,21 @@ class UserResource extends JsonResource
             return [];
         }
         return [
+            'id' => $this->id,
             'username' => $this->username,
             'firstName' => $this->first_name,
             'lastName' => $this->last_name,
-            'joined' => Carbon::parse($this->joined)->format('d-M-Y'),
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'birthDate' => Carbon::parse($this->birth_date)->format('d-M-Y'),
+            'joined' => Carbon::parse($this->joined)->format('d-M-Y H:i'),
             'isActive' => $this->is_active ? 'Identified' : 'not identified yet',
             'gender' => $this->gender,
+            'profile' => $this->profile->makeHidden('user_id'),
+            'career' => $this->career,
+            'contact' => $this->contact,
+            'notificationSettings' => $this->notificationSettings->makeHidden('user_id'),
+            'friends'=>$this->friends
         ];
     }
 }

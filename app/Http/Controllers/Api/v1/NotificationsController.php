@@ -7,6 +7,7 @@ use App\Http\Requests\v1\NotificationsRequest;
 use App\Http\Resources\v1\NotificationsCollection;
 use App\Http\Resources\v1\NotificationsResource;
 use App\Models\Notifications;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationsController extends Controller
 {
@@ -15,7 +16,11 @@ class NotificationsController extends Controller
      */
     public function index()
     {
-        return new NotificationsCollection(Notifications::paginate());
+        return new NotificationsCollection(
+            Auth::user()->receivedNotifications()
+                ->orderBy('datetime', 'desc')
+                ->paginate()
+        );
     }
 
     /**
@@ -34,8 +39,9 @@ class NotificationsController extends Controller
      */
     public function show($id)
     {
+        $user = Auth::user();
         $notification = Notifications::find($id);
-        if (!$notification) {
+        if (!$notification || $notification->receiver != $user->id) {
             return new NotificationsResource([]);
         }
         return new NotificationsResource($notification);
@@ -44,14 +50,21 @@ class NotificationsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(NotificationsRequest $request, Notifications $notification)
+    public function update(NotificationsRequest $request, $id)
     {
-        if ($request->method() == 'PATCH') {
+        $user = Auth::user();
+        $notification = Notifications::find($id);
+        if ($notification && $notification->receiver != $user->id) {
+            return [
+                'error' => 'permission denied!'
+            ];
+        }
+        if ($notification && $request->method() == 'PATCH') {
             $notification->update($request->all());
             return [
                 'success' => 'status updated successfully!'
             ];
-        } else {
+        } elseif ($notification && $request->method() == 'PUT') {
             return [
                 'error' => $request->method() . ' method is not supported!'
             ];
@@ -61,10 +74,19 @@ class NotificationsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Notifications $notification)
+    public function destroy($id)
     {
-        return [
-            'method soon will be implemented hhhh!'
-        ];
+        $notification = Notifications::find($id);
+        $user = Auth::user();
+        if ($notification && $notification->receiver != $user->id) {
+            return [
+                'error' => 'permission denied!'
+            ];
+        } elseif ($notification && $notification->receiver == $user->id) {
+            $notification->delete();
+            return [
+                'success' => 'notification deleted successfully'
+            ];
+        }
     }
 }

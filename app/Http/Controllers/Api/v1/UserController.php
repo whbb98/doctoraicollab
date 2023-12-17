@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\CreateUserRequest;
 use App\Http\Requests\v1\UpdateUserRequest;
+use App\Http\Resources\v1\UserDetailsResource;
 use App\Models\Contact;
 use App\Models\NotificationSettings;
 use App\Models\Profile;
@@ -46,13 +47,18 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($username)
     {
-        $user = User::find($id);
-        if (!$user) {
-            return new UserResource([]);
+        $user = User::where(['username' => $username])->first();
+        if ($user && $user->id != Auth::user()->id) {
+            return [
+                'error' => 'permission denied!'
+            ];
         }
-        return new UserResource($user);
+        if (!$user) {
+            return new UserDetailsResource([]);
+        }
+        return new UserDetailsResource($user);
     }
 
     /**

@@ -70,8 +70,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
-
+//    'timezone' => 'UTC',
+    'timezone' => 'Africa/Algiers',
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

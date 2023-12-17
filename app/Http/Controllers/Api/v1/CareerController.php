@@ -8,6 +8,7 @@ use App\Http\Resources\v1\CareerCollection;
 use App\Http\Resources\v1\CareerResource;
 use App\Models\Career;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CareerController extends Controller
 {
@@ -16,7 +17,7 @@ class CareerController extends Controller
      */
     public function index()
     {
-        return new CareerCollection(Career::paginate());
+//        return new CareerCollection(Career::paginate());
     }
 
     /**
@@ -34,7 +35,7 @@ class CareerController extends Controller
     public function show($id)
     {
         $career = Career::find($id);
-        if (!$career) {
+        if (!$career || Auth::user()->id != $career->user_id) {
             return new CareerResource([]);
         }
         return new CareerResource($career);
@@ -45,12 +46,16 @@ class CareerController extends Controller
      */
     public function update(UpdateCareerRequest $request, Career $career)
     {
+        if (($request->method() == 'PUT' || $request->method() == 'PATCH') && Auth::user()->id != $career->user_id) {
+            return [
+                'error' => 'access denied!'
+            ];
+        }
         if ($request->method() == 'PUT') {
             return [
                 'error' => 'method is not supported!'
             ];
         }
-
         $career->update($request->all());
         return [
             'success' => 'updated successfully'

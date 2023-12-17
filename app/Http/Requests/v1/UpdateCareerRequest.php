@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Models\Helper;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UpdateCareerRequest extends FormRequest
@@ -24,7 +26,7 @@ class UpdateCareerRequest extends FormRequest
     {
         if ($this->method() == 'POST') {
             return [
-                'type' => ['required', Rule::in('education', 'reward', 'experience')],
+                'type' => ['required', Rule::in(array_values(Helper::$career_types))],
                 'career_name' => ['required'],
                 'period' => ['required', 'date_format:Y-m-d'],
                 'organization' => ['required']
@@ -45,7 +47,7 @@ class UpdateCareerRequest extends FormRequest
     {
         //this will be replaced by sanctum soon
         $this->merge([
-            'user_id' => 2
+            'user_id' => Auth::user()->id
         ]);
     }
 }

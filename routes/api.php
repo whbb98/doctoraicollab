@@ -22,11 +22,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], function () {
     // auth
     Route::match('POST', '/login', 'UserController@login');
+    Route::post('/users', 'UserController@store');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::match('POST', '/logout', 'UserController@logout');
         // user
-        Route::resource('users', 'UserController');
+        Route::resource('users', 'UserController')->except(['store']);
         // profile
         Route::resource('profiles', 'ProfileController');
         Route::resource('careers', 'CareerController');

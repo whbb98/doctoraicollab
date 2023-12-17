@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
 
-require_once app_path('Helpers/constants.php');
-
 class Profile extends Model
 {
     use HasFactory;
@@ -81,7 +79,7 @@ class Profile extends Model
             }
         } else {
             $base64Photo = base64_encode($this->photo);
-            return "data:image/jpeg;base64," . $base64Photo;
+            return 'data:image/jpeg;base64,' . $base64Photo;
         }
     }
 
@@ -91,7 +89,7 @@ class Profile extends Model
             return "https://source.unsplash.com/950x200/?nature";
         } else {
             $base64Photo = base64_encode($this->cover);
-            return "data:image/jpeg;base64," . $base64Photo;
+            return 'data:image/jpeg;base64,' . $base64Photo;
         }
     }
 

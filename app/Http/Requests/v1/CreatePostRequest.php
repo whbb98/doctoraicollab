@@ -4,6 +4,7 @@ namespace App\Http\Requests\v1;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreatePostRequest extends FormRequest
 {
@@ -33,7 +34,7 @@ class CreatePostRequest extends FormRequest
     {
         $this->merge([
             'datetime' => Carbon::now(),
-            'user_id' => 2// will be replaced by sanctum user
+            'user_id' => Auth::user()->id
         ]);
     }
 }

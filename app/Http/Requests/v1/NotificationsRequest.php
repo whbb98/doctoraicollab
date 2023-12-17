@@ -5,6 +5,7 @@ namespace App\Http\Requests\v1;
 use App\Models\Notifications;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class NotificationsRequest extends FormRequest
@@ -42,10 +43,9 @@ class NotificationsRequest extends FormRequest
     {
         if ($this->method() == 'POST') {
             $this->merge([
-                'date' => Carbon::now(),
-                'sender' => 2 //will be replaced by the real user
+                'datetime' => Carbon::now(),
+                'sender' => Auth::user()->id
             ]);
-        } else if ($this->method() == 'PATCH') {
         }
     }
 }

@@ -9,7 +9,7 @@ class Helper extends Model
 {
     use HasFactory;
 
-    public static $careerType = ["education", "reward", "experience"];
+    public static $career_types = ["education", "reward", "experience"];
     public static $days = ["1" => 'Sunday',
         "2" => 'Monday',
         "3" => 'Tuesday',
@@ -27,7 +27,7 @@ class Helper extends Model
     ];
 
 
-    public static $cities = [
+    public static $dz_cities = [
         "01" => "Adrar",
         "02" => "Chlef",
         "03" => "Laghouat",
