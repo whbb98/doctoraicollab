@@ -35,16 +35,22 @@ class BlogFeedbackVoteRequest extends FormRequest
     {
         $feedback = $this->blog->blogFeedback;
         $labels = array_map(fn($el) => $el['id'], json_decode($feedback->labels ?? '[]', true));
-        return [
-            'answer' => ['required', Rule::in($labels)]
-        ];
+        if ($this->method() == 'POST') {
+            return [
+                'answer' => ['required', Rule::in($labels)]
+            ];
+        } else {
+            return [];
+        }
     }
 
     protected function passedValidation()
     {
-        $this->merge([
-            'voted_by' => Auth::user()->id,
-            'datetime' => Carbon::now()
-        ]);
+        if ($this->method() == 'POST') {
+            $this->merge([
+                'voted_by' => Auth::user()->id,
+                'datetime' => Carbon::now()
+            ]);
+        }
     }
 }
