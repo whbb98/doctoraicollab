@@ -13,15 +13,16 @@ class BlogCommentRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
+    private $blog;
     private $participantsIDs;
 
     public function authorize(): bool
     {
-        $blog = Blog::find($this->route('blogID'));
-        if (!$blog) {
+        $this->blog = Blog::find($this->route('blogID'));
+        if (!$this->blog) {
             return false;
         }
-        $this->participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        $this->participantsIDs = array_map(fn($p) => $p['user_id'], $this->blog->blogParticipants->toArray());
         return in_array(Auth::user()->id, $this->participantsIDs);
     }
 
@@ -32,20 +33,26 @@ class BlogCommentRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'comment_id' => ['sometimes', 'required', Rule::exists('blog_comments', 'id')],
-            'comment' => ['required', 'max:255'],
-            'replied_to' => ['sometimes', 'required', Rule::in($this->participantsIDs)]
-        ];
+        if ($this->method() == 'POST') {
+            return [
+                'comment_id' => ['sometimes', 'required', Rule::exists('blog_comments', 'id')],
+                'comment' => ['required', 'max:255'],
+                'replied_to' => ['sometimes', 'required', Rule::in($this->participantsIDs)]
+            ];
+        } else {
+            return [];
+        }
     }
 
     protected function passedValidation()
     {
-        $this->merge([
-            'user_id' => Auth::user()->id,
-            'comment' => strip_tags($this->comment),
-            'datetime' => Carbon::now(),
-        ]);
+        if ($this->method() == 'POST') {
+            $this->merge([
+                'user_id' => Auth::user()->id,
+                'comment' => strip_tags($this->comment),
+                'datetime' => Carbon::now(),
+            ]);
+        }
     }
 
     public function messages()

@@ -44,12 +44,12 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
         Route::match('POST', 'blogs/{blogID}', 'BlogController@updateBlog');
         Route::match('DELETE', 'blogs/{blogID}/images/{imgID}', 'BlogController@deleteBlogImage');
         Route::match('DELETE', 'blogs/{blogID}/participants/{username}', 'BlogController@deleteParticipant');
-        Route::match('POST', 'blogs/{blogID}/imageAnnotation', 'BlogController@ImageAnnotation');
-        Route::match('POST', 'blogs/{blogID}/blogComment', 'BlogController@blogComment');
+        Route::match(['POST', 'GET'], 'blogs/{blogID}/imageAnnotation', 'BlogController@ImageAnnotation');
+        Route::match(['POST', 'GET'], 'blogs/{blogID}/blogComment', 'BlogController@blogComment');
         Route::match('DELETE', 'blogs/{blogID}/deleteComment', 'BlogController@deleteComment');
         Route::match('POST', 'blogs/{blogID}/feedback', 'BlogController@feedback');
         Route::match('GET', 'blogs/{blogID}/icd10_auto_complete', 'BlogController@icd10AutoComplete');
-        Route::match('POST', 'blogs/{blogID}/feedback_vote', 'BlogController@feedbackVote');
+        Route::match(['POST', 'GET'], 'blogs/{blogID}/feedback_vote', 'BlogController@feedbackVote');
         Route::match('POST', 'blogs/{blogID}/save_image_predictions', 'BlogController@saveImagePredictions');
     });
 });

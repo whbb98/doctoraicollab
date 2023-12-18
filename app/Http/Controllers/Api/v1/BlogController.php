@@ -270,34 +270,38 @@ class BlogController extends Controller
                 'error' => 'access denied!'
             ];
         }
-        $blogImagesIDs = array_map(fn($obj) => $obj['id'], $blog->blogImages->toArray());
-        if (!in_array($request->image_id, $blogImagesIDs)) {
-            return [
-                'error' => 'no image found for annotation in this blog!'
-            ];
-        }
-        $userAnnotation = UserAnnotations::where([
-            'user_id' => Auth::user()->id,
-            'blog_id' => $blog->id,
-            'image_id' => $request->image_id
-        ])->first();
-
-        if (!$userAnnotation) {
-            UserAnnotations::create([
-                'user_id' => Auth::user()->id,
+        if ($request->method() == 'GET') {
+            return UserAnnotations::where([
+                'user_id' => $request->user_id,
                 'blog_id' => $blog->id,
-                'image_id' => $request->image_id,
-                'annotation' => $request->annotation
-            ]);
-            return [
-                'success' => 'annotation created successfully!'
-            ];
-        } else {
-            $userAnnotation->update($request->except('image_id'));
-            return [
-                'success' => 'annotation updated successfully!'
-            ];
-        }
+                'image_id' => $request->image_id
+            ])->first();
+        } else
+            if ($request->method() == 'POST') {
+
+                $userAnnotation = UserAnnotations::where([
+                    'user_id' => Auth::user()->id,
+                    'blog_id' => $blog->id,
+                    'image_id' => $request->image_id
+                ])->first();
+
+                if (!$userAnnotation) {
+                    UserAnnotations::create([
+                        'user_id' => Auth::user()->id,
+                        'blog_id' => $blog->id,
+                        'image_id' => $request->image_id,
+                        'annotation' => $request->annotation
+                    ]);
+                    return [
+                        'success' => 'annotation created successfully!'
+                    ];
+                } else {
+                    $userAnnotation->update($request->except('image_id'));
+                    return [
+                        'success' => 'annotation updated successfully!'
+                    ];
+                }
+            }
     }
 
     public function blogComment($blogID, BlogCommentRequest $request)
@@ -308,21 +312,26 @@ class BlogController extends Controller
                 'error' => 'blog does not exist!'
             ];
         }
-        $comment = BlogComments::find($request->comment_id);
-        if (!$comment) {
-            $request->merge([
-                'blog_id' => $blog->id
-            ]);
-            $comment = BlogComments::create($request->all());
-            return [
-                'success' => 'comment created successfully!'
-            ];
-        } else {
-            $comment->update($request->except('user_id', 'blog_id'));
-            return [
-                'success' => 'comment updated successfully!'
-            ];
-        }
+        if ($request->method() == 'GET') {
+            return $blog->blogComments;
+        } else
+            if ($request->method() == 'POST') {
+                $comment = BlogComments::find($request->comment_id);
+                if (!$comment) {
+                    $request->merge([
+                        'blog_id' => $blog->id
+                    ]);
+                    $comment = BlogComments::create($request->all());
+                    return [
+                        'success' => 'comment created successfully!'
+                    ];
+                } else {
+                    $comment->update($request->except('user_id', 'blog_id'));
+                    return [
+                        'success' => 'comment updated successfully!'
+                    ];
+                }
+            }
     }
 
     public function deleteComment($blogID, BlogDeleteCommentRequest $request)
@@ -393,18 +402,23 @@ class BlogController extends Controller
             ];
         }
         $feedback = $blog->blogFeedback;
-        $feedback_data = $feedback->feedbackData()->where('voted_by', Auth::user()->id)->first();
-        if (!$feedback_data) {
-            $feedback->feedbackData()->create($request->all());
-            return [
-                'success' => 'feedback vote created successfully!'
-            ];
-        } else {
-            $feedback_data->update($request->all());
-            return [
-                'success' => 'feedback vote updated successfully!'
-            ];
-        }
+        if ($request->method() == 'GET') {
+            return $feedback->feedbackData ?? [];
+        } else
+            if ($request->method() == 'POST') {
+                $feedback_data = $feedback->feedbackData()->where('voted_by', Auth::user()->id)->first();
+                if (!$feedback_data) {
+                    $feedback->feedbackData()->create($request->all());
+                    return [
+                        'success' => 'feedback vote created successfully!'
+                    ];
+                } else {
+                    $feedback_data->update($request->all());
+                    return [
+                        'success' => 'feedback vote updated successfully!'
+                    ];
+                }
+            }
     }
 
     public function saveImagePredictions($blogID, ImagePredictionsRequest $request)

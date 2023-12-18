@@ -11,14 +11,17 @@ use Illuminate\Validation\Rule;
 
 class BlogImageAnnotationRequest extends FormRequest
 {
+    private $blog;
+    private $participantsIDs;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $blog = Blog::find($this->route('blogID'));
-        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
-        return in_array(Auth::user()->id, $participantsIDs);
+        $this->blog = Blog::find($this->route('blogID'));
+        $this->participantsIDs = array_map(fn($p) => $p['user_id'], $this->blog->blogParticipants->toArray());
+        return in_array(Auth::user()->id, $this->participantsIDs);
     }
 
     /**
@@ -28,9 +31,17 @@ class BlogImageAnnotationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'image_id' => ['required', 'integer', Rule::exists('blog_images', 'id')],
-            'annotation' => ['required', 'json']
-        ];
+        $blogImagesIDs = array_map(fn($obj) => $obj['id'], $this->blog->blogImages->toArray());
+        if ($this->method() == 'POST') {
+            return [
+                'image_id' => ['required', 'integer', Rule::in($blogImagesIDs)],
+                'annotation' => ['required', 'json']
+            ];
+        } else {
+            return [
+                'image_id' => ['required', 'integer', Rule::in($blogImagesIDs)],
+                'user_id' => ['required', Rule::in($this->participantsIDs)]
+            ];
+        }
     }
 }
