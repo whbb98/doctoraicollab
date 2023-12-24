@@ -7,7 +7,8 @@
         <link id="favicon" rel="icon" type="image/png" href="favicon.png">
         @vite('resources/css/main.css')
     </head>
-    <body id="app">
+    <body>
+    <div id="app"></div>
         @vite('resources/js/main.js')
     </body>
 </html>
