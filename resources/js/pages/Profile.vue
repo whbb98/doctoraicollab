@@ -67,7 +67,7 @@
                                 <v-card-actions class="justify-space-between text-capitalize">
                                     <span class="d-flex align-center">
                                         <v-icon
-                                        class="text-primary mr-1">mdi-map-marker</v-icon>
+                                            class="text-primary mr-1">mdi-map-marker</v-icon>
                                         oran
                                     </span>
                                     <span class="d-flex align-center">
@@ -76,7 +76,7 @@
                                     </span>
                                     <span class="d-flex align-center">
                                         <v-icon
-                                        class="text-primary mr-1">mdi-calendar-account</v-icon>
+                                            class="text-primary mr-1">mdi-calendar-account</v-icon>
                                         nov 2023
                                     </span>
                                 </v-card-actions>
@@ -103,11 +103,15 @@
                 </v-window-item>
 
                 <v-window-item value="contact">
-                    Contact
+                    <contact-me-form/>
+                    <contact-me/>
                 </v-window-item>
 
                 <v-window-item value="settings">
-                    Settings
+                    <personal-info/>
+                    <career-info/>
+                    <notifications-settings/>
+                    <account-settings/>
                 </v-window-item>
             </v-window>
         </v-card-text>
@@ -116,9 +120,15 @@
 
 <script setup>
 import {ref} from "vue";
-import ProfileCard from "@/Components/ProfileCard.vue";
-import ExperienceForm from "@/Components/ExperienceForm.vue";
-import ExperienceData from "@/Components/ExperienceData.vue";
+import ProfileCard from "@/components/ProfileCard.vue";
+import ExperienceForm from "@/components/ExperienceForm.vue";
+import ExperienceData from "@/components/ExperienceData.vue";
+import ContactMe from "@/components/ContactMe.vue";
+import ContactMeForm from "@/components/ContactMeForm.vue";
+import PersonalInfo from "@/components/Profile/PersonalInfo.vue";
+import CareerInfo from "@/components/Profile/CareerInfo.vue";
+import NotificationsSettings from "@/components/Profile/NotificationsSettings.vue";
+import AccountSettings from "@/components/Profile/AccountSettings.vue";
 
 const tab = ref(null)
 </script>

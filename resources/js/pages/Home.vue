@@ -5,8 +5,8 @@
 
 <script setup>
 
-import PostForm from "@/Components/PostForm.vue";
-import PostCard from "@/Components/PostCard.vue";
+import PostForm from "@/components/PostForm.vue";
+import PostCard from "@/components/PostCard.vue";
 </script>
 
 <style scoped>
