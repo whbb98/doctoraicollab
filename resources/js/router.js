@@ -1,11 +1,11 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import Home from "@/Pages/Home.vue";
-import Profile from "@/Pages/Profile.vue";
-import Messages from "@/Pages/Messages.vue";
-import Notifications from "@/Pages/Notifications.vue";
-import Blogs from "@/Pages/Blogs.vue";
-import Meetings from "@/Pages/Meetings.vue";
-import Network from "@/Pages/Network.vue";
+import Home from "@/pages/Home.vue";
+import Profile from "@/pages/Profile.vue";
+import Messages from "@/pages/Messages.vue";
+import Notifications from "@/pages/Notifications.vue";
+import Blogs from "@/pages/Blogs.vue";
+import Meetings from "@/pages/Meetings.vue";
+import Network from "@/pages/Network.vue";
 
 const router = createRouter({
     history: createWebHistory(),
