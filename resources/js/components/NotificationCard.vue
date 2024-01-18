@@ -1,38 +1,38 @@
 <template>
-    <v-card class="pa-2 d-flex justify-space-between align-center" color="secondary">
+    <v-card class="pa-2 d-flex justify-space-between align-center"
+            :color="notification.isRead?'secondary':'primary'">
         <v-avatar class="profile-avatar" color="secondary" size="75" image="https://i.pravatar.cc/50">
             <span class="text-h5">AR</span>
         </v-avatar>
         <div class="ml-5 w-100">
             <p class="notification-body text-h6">
-                <b>{{notification.sender}}</b>
-                {{ notification.message }}
+                <b>{{ notification.sender }}</b> {{ notification.message }}
             </p>
             <div class="notification-footer mt-5 d-flex justify-space-between">
-                <span class="text-primary">{{ notification.createdAt }}</span>
-                <span v-if="!notification.isRead" class="text-primary font-weight-bold"
-                @click="notification.isRead = true"
-                >mark as read</span>
+                <span :class="notification.isRead?'text-primary':'text-white'">
+                    {{ notification.createdAt }}
+                </span>
+                <span v-if="!notification.isRead"
+                      class="font-weight-bold text-dark"
+                      @click="markAsRead(notification.id)"
+                >
+                    mark as read</span>
             </div>
         </div>
     </v-card>
 </template>
 
 <script setup>
-import {reactive} from "vue";
+const emit = defineEmits(['markAsRead'])
+const props = defineProps(['notification'])
 
-const notification = reactive({
-    id: '545',
-    sender: 'John Doe',
-    message: 'praesent impetus vestibulum porro quaestio no appareat pharetra.',
-    isRead: false,
-    createdAt: '16 Jan 2024 at 14:32'
-})
-
+function markAsRead(id) {
+    emit('markAsRead', id)
+}
 </script>
 
 <style scoped>
-.notification-footer span:last-of-type{
+.notification-footer span:last-of-type {
     cursor: pointer;
 }
 </style>
