@@ -1,7 +1,7 @@
 <template>
     <v-card color="secondary">
         <v-card-title class="pa-0">
-            <v-img height="200" cover src="https://picsum.photos/600/200">
+            <v-img height="200" cover :src="blog.backgroundUrl">
                 <template #placeholder>
                     <div class="d-flex align-center justify-center fill-height">
                         <v-progress-circular
@@ -13,26 +13,26 @@
             </v-img>
         </v-card-title>
         <v-card-text class="text-capitalize mt-3 py-0">
-            <h3 class="mb-2">blog title</h3>
+            <h3 class="mb-2">{{blog.title}}</h3>
             <p class="mb-3">
                 {{ truncatedDescription }}
             </p>
             <span class="d-flex align-center">
                 <v-icon>mdi-calendar</v-icon>
-                {{ new Date().toDateString() }} 14:31
+                {{blog.createdAt}}
             </span>
         </v-card-text>
         <v-card-actions>
             <span class="d-flex align-center mr-5">
                 <v-icon>mdi-account-group</v-icon>
-                12
+                {{blog.participants}}
             </span>
             <span class="d-flex align-center">
                 <v-icon>mdi-comment-multiple-outline</v-icon>
-                15
+                {{blog.comments}}
             </span>
             <v-spacer/>
-            <router-link to="/blogs/id" class="text-capitalize text-decoration-none text-primary">read more
+            <router-link :to="`/blogs/${blog.id}`" class="text-capitalize text-decoration-none text-primary">read more
             </router-link>
         </v-card-actions>
     </v-card>
@@ -40,21 +40,15 @@
 
 <script setup>
 
-import {computed, ref} from "vue";
+import {computed} from "vue";
 
-const description = ref(
-    'Atomorummetus iaculis dictas. Deterruissetquaerendum quas instructior placerat perpetua error.\n' +
-    '                Dictumaccusata massa salutatus doming. Aptentvis vidisse putent nonumy noluisse ridiculus cras inimicus\n' +
-    '                pellentesque pharetra alienum voluptatum legere sadipscing. Sapienmovet corrumpit periculis vocent\n' +
-    '                eripuit delectus adversarium liber quaeque varius dui aliquid nominavi suscipiantur potenti civibus dui\n' +
-    '                sonet.'
-)
+const props = defineProps(['blog'])
 const maxLength = 100
 const truncatedDescription = computed(() => {
-    if (description.value.length <= maxLength) {
-        return description.value
+    if (props.blog.description.length <= maxLength) {
+        return props.blog.description
     } else {
-        return description.value.slice(0, maxLength) + '...'
+        return props.blog.description.slice(0, maxLength) + '...'
     }
 })
 </script>
