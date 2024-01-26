@@ -17,7 +17,7 @@
                         inline
                     ></v-badge>
                 </v-chip>
-                <v-chip value="myBlog" :variant="filterBy=='myBlogs'? 'elevated':'outlined'">
+                <v-chip value="myBlog" :variant="filterBy=='myBlog'? 'elevated':'outlined'">
                     my blogs
                     <v-badge
                         color="dark"
@@ -43,9 +43,7 @@
                 </v-chip>
             </v-chip-group>
             <v-spacer/>
-            <v-btn rounded color="primary">
-                new blog
-            </v-btn>
+            <BlogForm/>
         </v-card-text>
         <v-card-text>
             <v-row>
@@ -64,6 +62,8 @@
 
 import {onMounted, reactive, ref, watch} from "vue";
 import BlogCard from "@/components/BlogCard.vue";
+import ExperienceForm from "@/components/ExperienceForm.vue";
+import BlogForm from "@/components/BlogForm.vue";
 
 const filterBy = ref('all')
 const blogs = [
