@@ -39,7 +39,7 @@
                                                                        @click="dialogDatePicker=false">Ok
                                                                 </v-btn>
                                                                 <v-btn color="warning" variant="outlined"
-                                                                       @click="careerDate=null">Clear
+                                                                       @click="careerDate=null; dialogDatePicker=false">Clear
                                                                 </v-btn>
                                                             </v-card-actions>
                                                         </v-card>

@@ -14,9 +14,9 @@
                 </span>
                 <span v-if="!notification.isRead"
                       class="font-weight-bold text-dark"
-                      @click="markAsRead(notification.id)"
-                >
-                    mark as read</span>
+                      @click="markAsRead(notification.id)">
+                    <v-icon title="mark as read">mdi-playlist-check</v-icon>
+                </span>
             </div>
         </div>
     </v-card>
