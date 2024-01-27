@@ -60,9 +60,8 @@
 
 <script setup>
 
-import {onMounted, reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import BlogCard from "@/components/BlogCard.vue";
-import ExperienceForm from "@/components/ExperienceForm.vue";
 import BlogForm from "@/components/BlogForm.vue";
 
 const filterBy = ref('all')
@@ -144,11 +143,14 @@ const blogsCount = reactive({
     participating: 0,
     pending: 0
 })
-onMounted(() => {
+function updateCounters(){
     blogsCount.all = blogs.length
     blogsCount.pending = blogs.filter(blog => blog.flag === 'pending').length
     blogsCount.participating = blogs.filter(blog => blog.flag === 'participating').length
     blogsCount.myBlog = blogs.filter(blog => blog.flag === 'myBlog').length
+}
+onMounted(() => {
+   updateCounters()
 })
 </script>
 
