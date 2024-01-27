@@ -143,14 +143,16 @@ const blogsCount = reactive({
     participating: 0,
     pending: 0
 })
-function updateCounters(){
+
+function updateCounters() {
     blogsCount.all = blogs.length
     blogsCount.pending = blogs.filter(blog => blog.flag === 'pending').length
     blogsCount.participating = blogs.filter(blog => blog.flag === 'participating').length
     blogsCount.myBlog = blogs.filter(blog => blog.flag === 'myBlog').length
 }
+
 onMounted(() => {
-   updateCounters()
+    updateCounters()
 })
 </script>
 

@@ -4,7 +4,7 @@
             <v-card-title class="text-capitalize">share new post</v-card-title>
             <v-card-text>
                 <v-textarea rows="3" clearable label="Post Description" prepend-icon="mdi-text"></v-textarea>
-                <v-file-input multiple clearable label="Post Attachments"></v-file-input>
+                <v-file-input multiple clearable chips color="primary" label="Post Attachments"></v-file-input>
                 <v-switch color="primary" label="Visible to All" prepend-icon="mdi-earth"></v-switch>
             </v-card-text>
             <v-card-actions>
