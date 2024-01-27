@@ -75,12 +75,18 @@
                                             />
                                         </v-col>
                                         <v-col cols="12" v-if="isMeeting">
-                                            <date-form />
+                                            <date-form/>
                                             <v-text-field label="meeting link"
                                                           name="meetingUrl"
                                                           prepend-icon="mdi-link"
                                                           type="url"
                                                           placeholder="eg: https://meet.google.com/ysb-vnnz-iqc"
+                                            />
+                                            <v-text-field
+                                                name="meetingDuration"
+                                                label="duration (minutes)"
+                                                prepend-icon="mdi-timer"
+                                                type="number"
                                             />
                                         </v-col>
                                         <v-col cols="12">
