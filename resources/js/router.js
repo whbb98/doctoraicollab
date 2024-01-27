@@ -6,39 +6,66 @@ import Notifications from "@/pages/Notifications.vue";
 import Blogs from "@/pages/Blogs.vue";
 import Meetings from "@/pages/Meetings.vue";
 import Network from "@/pages/Network.vue";
+import BlogDetails from "@/components/BlogDetails.vue";
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
-            path: '/', redirect: '/home',
+            path: '/',
+            redirect: '/home',
         },
         {
-            path: '/home', name: 'Home', component: Home,
+            path: '/home',
+            name: 'Home',
+            component: Home,
             meta: {}
         },
         {
-            path: '/profile', name: 'Profile', component: Profile,
+            path: '/profile',
+            name: 'Profile',
+            component: Profile,
             meta: {}
         },
         {
-            path: '/messages', name: 'Messages', component: Messages,
+            path: '/profile/:username',
+            name: 'ProfileView',
+            component: Profile,
             meta: {}
         },
         {
-            path: '/notifications', name: 'Notifications', component: Notifications,
+            path: '/messages',
+            name: 'Messages',
+            component: Messages,
             meta: {}
         },
         {
-            path: '/blogs', name: 'Blogs', component: Blogs,
+            path: '/notifications',
+            name: 'Notifications',
+            component: Notifications,
             meta: {}
         },
         {
-            path: '/meetings', name: 'Meetings', component: Meetings,
+            path: '/blogs',
+            name: 'Blogs',
+            component: Blogs,
             meta: {}
         },
         {
-            path: '/network', name: 'Network', component: Network,
+            path: '/blogs/:blogID',
+            name: 'BlogDetails',
+            component: BlogDetails
+        },
+        {
+            path: '/meetings',
+            name: 'Meetings',
+            component: Meetings,
+            meta: {}
+        },
+        {
+            path: '/network',
+            name: 'Network',
+            component: Network,
             meta: {}
         }
 

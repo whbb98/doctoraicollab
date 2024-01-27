@@ -90,7 +90,7 @@
                             <v-card>
                                 <v-card-title class="text-primary">Followers</v-card-title>
                                 <v-row>
-                                    <profile-card v-for="i in 5"/>
+                                    <profile-card v-for="user in users" :user="user"/>
                                 </v-row>
                             </v-card>
                         </v-list-item>
@@ -131,6 +131,38 @@ import NotificationsSettings from "@/components/Profile/NotificationsSettings.vu
 import AccountSettings from "@/components/Profile/AccountSettings.vue";
 
 const tab = ref(null)
+
+const users = [
+    {
+        username: 'ouahab98',
+        name: 'abdelouahab radja',
+        city: 'oran',
+        hospital: 'CHO',
+        department: 'pneumology',
+        occupation: 'assistant',
+        profileImgUrl: 'https://i.pravatar.cc/50',
+        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
+    }, {
+        username: 'ouahab74',
+        name: 'abdelouahab radja',
+        city: 'oran',
+        hospital: 'CHO',
+        department: 'pneumology',
+        occupation: 'assistant',
+        profileImgUrl: 'https://i.pravatar.cc/50',
+        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
+    }
+    , {
+        username: 'ouahab12',
+        name: 'abdelouahab radja',
+        city: 'oran',
+        hospital: 'CHO',
+        department: 'pneumology',
+        occupation: 'assistant',
+        profileImgUrl: 'https://i.pravatar.cc/50',
+        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
+    }
+]
 </script>
 
 <style scoped>
