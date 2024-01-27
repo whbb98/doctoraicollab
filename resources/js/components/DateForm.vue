@@ -1,7 +1,7 @@
 <template>
     <v-text-field prepend-icon="mdi-calendar-clock-outline"
                   readonly
-                  label="Period Date"
+                  :label="label"
                   name="meetingDateTime"
                   v-model="selectedDateTime">
         <v-dialog v-model="dialogDateForm" activator="parent">
@@ -29,6 +29,7 @@
 <script setup>
 import {ref} from "vue";
 
+const props = defineProps(['label'])
 const selectedDate = ref(null)
 const selectedTime = ref(null)
 const selectedDateTime = ref(null)

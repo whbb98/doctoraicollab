@@ -75,7 +75,7 @@
                                             />
                                         </v-col>
                                         <v-col cols="12" v-if="isMeeting">
-                                            <date-form/>
+                                            <date-form label="meeting date time"/>
                                             <v-text-field label="meeting link"
                                                           name="meetingUrl"
                                                           prepend-icon="mdi-link"
