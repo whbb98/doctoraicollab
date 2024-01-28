@@ -20,13 +20,12 @@
                                             <v-text-field name="title"
                                                           prepend-icon="mdi-text-account"
                                                           label="blog title"
-                                                          variant="outlined"/>
+                                            />
                                         </v-col>
                                         <v-col cols="12">
                                             <v-textarea name="description"
                                                         prepend-icon="mdi-text"
                                                         label="blog description"
-                                                        variant="outlined"
                                                         no-resize
                                             />
                                         </v-col>
