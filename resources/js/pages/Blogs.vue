@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-title class="font-weight-bold text-capitalize">blogs</v-card-title>
+        <v-card-title class="font-weight-bold text-capitalize text-primary">blogs</v-card-title>
         <v-card-text class="d-flex align-center">
             <v-chip-group
                 class="text-capitalize"

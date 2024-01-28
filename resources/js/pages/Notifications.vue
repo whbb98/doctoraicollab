@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-title class="font-weight-bold text-capitalize d-flex align-center">
+        <v-card-title class="font-weight-bold text-primary text-capitalize d-flex align-center">
             notifications
         </v-card-title>
         <v-card-text>

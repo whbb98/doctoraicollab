@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-title class="font-weight-bold text-capitalize">users network</v-card-title>
+        <v-card-title class="font-weight-bold text-capitalize text-primary">users network</v-card-title>
         <v-card-text>
             <v-form class="text-capitalize">
                 <v-row align="center" justify="center">
