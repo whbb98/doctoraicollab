@@ -1,7 +1,7 @@
 <template>
     <v-form @submit.prevent="uploadPost" class="mb-5">
         <v-card rounded="51">
-            <v-card-title class="text-capitalize">share new post</v-card-title>
+            <v-card-title class="text-capitalize text-primary font-weight-bold">share new post</v-card-title>
             <v-card-text>
                 <v-textarea rows="3" clearable label="Post Description" prepend-icon="mdi-text"></v-textarea>
                 <v-file-input multiple clearable chips color="primary" label="Post Attachments"></v-file-input>
