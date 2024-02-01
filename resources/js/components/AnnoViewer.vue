@@ -1,5 +1,8 @@
 <template>
-    <div :id="viewerId" class="openseadragon-viewer"></div>
+    <div :id="viewerId"
+         class="openseadragon-viewer rounded border w-100 h-100"
+         @mousemove="handleMouseMove" @keydown.shift="handleShiftKey" @keyup.shift="resetCursor"
+    />
 </template>
 
 <script>
@@ -10,11 +13,13 @@ import '@recogito/annotorious-openseadragon/dist/annotorious.min.css';
 export default {
     props: {
         viewerId: String,
-        imgUrl: String
+        imgUrl: String,
+        drawingTool: String,
+        isAnnoVisible: Boolean
     },
     data() {
         return {
-            anno: null
+            anno: null,
         };
     },
     mounted() {
@@ -28,18 +33,36 @@ export default {
         });
         const config = {}; // Optional plugin config options
         this.anno = Annotorious(viewer, config);
-        this.anno.setDrawingTool('polygon')
+        this.anno.setDrawingTool(this.drawingTool)
+        this.anno.setVisible(this.isAnnoVisible)
     },
-    methods: {}
+    watch: {
+        drawingTool(newVal) {
+            this.anno.setDrawingTool(newVal)
+        },
+        isAnnoVisible(newVal) {
+            this.anno.setVisible(newVal)
+        }
+    },
+    methods: {
+        handleMouseMove(event) {
+            if (event.shiftKey) {
+                this.$el.style.cursor = 'crosshair';
+            } else {
+                this.$el.style.cursor = 'grab';
+            }
+        },
+        handleShiftKey() {
+            this.$el.style.cursor = 'crosshair';
+        },
+        resetCursor() {
+            this.$el.style.cursor = 'grab';
+        },
+    }
 };
 </script>
 
 <style scoped>
 .openseadragon-viewer {
-    width: 100%;
-    height: calc(100vh - 150px);
-    border: 1px solid #000;
-    margin: 20px auto;
-    cursor: grab;
 }
 </style>
