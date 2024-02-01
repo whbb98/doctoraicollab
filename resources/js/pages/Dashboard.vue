@@ -49,13 +49,6 @@
 </template>
 
 <script setup>
-import {provide} from "vue";
-
-const ENV = {
-    APP_URL: import.meta.env.VITE_APP_URL,
-    APP_API: import.meta.env.VITE_APP_API
-}
-provide('ENV', ENV)
 
 </script>
 
