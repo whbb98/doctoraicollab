@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router';
+import {createRouter, createWebHistory, useRouter} from 'vue-router';
 import Home from "@/pages/Home.vue";
 import Profile from "@/pages/Profile.vue";
 import Messages from "@/pages/Messages.vue";
@@ -10,6 +10,7 @@ import BlogDetails from "@/components/BlogDetails.vue";
 import Signin from "@/pages/signin.vue";
 import Signup from "@/pages/signup.vue";
 import Dashboard from "@/pages/Dashboard.vue";
+import {useMainStore} from "@/stores/mainStore.js";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -21,56 +22,57 @@ const router = createRouter({
             children: [
                 {
                     path: '/home',
-                    name: 'home',
+                    name: 'Home',
                     component: Home,
-                    meta: {}
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: '/profile',
-                    name: 'profile',
+                    name: 'Profile',
                     component: Profile,
-                    meta: {}
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: '/profile/:username',
-                    name: 'profileView',
+                    name: 'ProfileView',
                     component: Profile,
-                    meta: {}
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: '/messages',
-                    name: 'messages',
+                    name: 'Messages',
                     component: Messages,
-                    meta: {}
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: '/notifications',
-                    name: 'notifications',
+                    name: 'Notifications',
                     component: Notifications,
-                    meta: {}
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: '/blogs',
-                    name: 'blogs',
+                    name: 'Blogs',
                     component: Blogs,
-                    meta: {}
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: '/blogs/:blogID',
-                    name: 'blogDetails',
-                    component: BlogDetails
+                    name: 'BlogDetails',
+                    component: BlogDetails,
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: '/meetings',
-                    name: 'meetings',
+                    name: 'Meetings',
                     component: Meetings,
-                    meta: {}
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: '/network',
-                    name: 'network',
+                    name: 'Network',
                     component: Network,
-                    meta: {}
+                    meta: {requiresAuth: true}
                 }
             ]
         },
@@ -80,21 +82,36 @@ const router = createRouter({
         },
         {
             path: '/signin',
-            name: 'signin',
+            name: 'Signin',
             component: Signin,
-            meta: {}
+            meta: {requiresAuth: false}
         },
         {
             path: '/signup',
-            name: 'signup',
+            name: 'Signup',
             component: Signup,
-            meta: {}
+            meta: {requiresAuth: false}
         },
+        {
+            path: '/:notFound(.*)',
+            redirect: '/'
+        }
     ],
 })
 
 router.beforeEach((to, from, next) => {
+    const mainStore = useMainStore()
     document.title = `${import.meta.env.VITE_APP_NAME} - ${to.name}`
-    next()
+    if (!to.meta.requiresAuth) {
+        if (mainStore.getAuthToken !== null) {
+            return next('/')
+        }
+        return next()
+    }
+    if (to.meta.requiresAuth && mainStore.getAuthToken) {
+        return next()
+    } else {
+        return next('/signin')
+    }
 })
 export default router
