@@ -17,9 +17,32 @@ class ProfileController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $req)
     {
-        return new ProfileCollection(Profile::paginate());
+        $query = Profile::query();
+        if ($req->filled('user')) {
+            $query->whereHas('user', function ($subquery) use ($req) {
+                $searchTerm = '%' . $req->input('user') . '%';
+                $subquery->where('email', 'like', $searchTerm)
+                    ->orWhere('username', 'like', $searchTerm)
+                    ->orWhere('first_name', 'like', $searchTerm)
+                    ->orWhere('last_name', 'like', $searchTerm);
+            });
+        }
+        if ($req->filled('city')) {
+            $query->where('city', $req->input('city'));
+        }
+        if ($req->filled('hospital')) {
+            $query->where('hospital', 'like', '%' . $req->input('hospital') . '%');
+        }
+        if ($req->filled('department')) {
+            $query->where('department', 'like', '%' . $req->input('department') . '%');
+        }
+        if ($req->filled('occupation')) {
+            $query->where('occupation', 'like', '%' . $req->input('occupation') . '%');
+        }
+        $profiles = $query->paginate();
+        return new ProfileCollection($profiles);
     }
 
     /**
