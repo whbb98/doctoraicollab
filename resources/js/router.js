@@ -10,7 +10,7 @@ import BlogDetails from "@/components/BlogDetails.vue";
 import Signin from "@/pages/signin.vue";
 import Signup from "@/pages/signup.vue";
 import Dashboard from "@/pages/Dashboard.vue";
-import {useMainStore} from "@/stores/mainStore.js";
+import {useAuthStore} from "@/stores/authStore.js";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -100,15 +100,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    const mainStore = useMainStore()
+    const authStore = useAuthStore()
     document.title = `${import.meta.env.VITE_APP_NAME} - ${to.name}`
     if (!to.meta.requiresAuth) {
-        if (mainStore.getAuthToken !== null) {
+        if (authStore.getAuthToken !== null) {
             return next('/')
         }
         return next()
     }
-    if (to.meta.requiresAuth && mainStore.getAuthToken) {
+    if (to.meta.requiresAuth && authStore.getAuthToken) {
         return next()
     } else {
         return next('/signin')
