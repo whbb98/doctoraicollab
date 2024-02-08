@@ -9,6 +9,12 @@ export const useMainStore = defineStore('mainStore', {
     getters: {
         getAuthToken() {
             return this.token
+        },
+        getAuthUser() {
+            return this.authUser
+        },
+        getUserNameAbbr() {
+            return this.getAuthUser.firstName.charAt(0) + this.getAuthUser.lastName.charAt(0)
         }
     },
     actions: {
