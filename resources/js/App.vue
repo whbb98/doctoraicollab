@@ -1,28 +1,43 @@
 <template>
     <v-app>
-        <router-view/>
+        <router-view @open-snackbar="openSnackbarPopup"/>
         <v-footer order="0" app color="dark">
             <h1>footer</h1>
         </v-footer>
+        <popup-snackbar :data="popupData"/>
     </v-app>
-
 </template>
 
 <script setup>
-import {provide} from "vue";
+import {provide, ref} from "vue";
+import PopupSnackbar from "@/components/PopupSnackbar.vue";
 
 const ENV = {
     APP_URL: import.meta.env.VITE_APP_URL,
-    APP_API: import.meta.env.VITE_APP_API,
-    AUTH_TOKEN: '43|jhGxfJbz7EDNs4V3k92CUcedKpAZDKtzuMkQfqHOcce8a333'
+    APP_API_URL: import.meta.env.VITE_APP_API_URL,
+    getCsrfToken: getCsrfToken()
 }
 provide('ENV', ENV)
+
+const popupData = ref({
+    open: false,
+    title: '',
+    message: '',
+    type: ''
+});
+
+function openSnackbarPopup(data) {
+    if (data) {
+        popupData.value = data
+    }
+}
+
+function getCsrfToken() {
+    return document.head.querySelector('meta[name="csrf-token"]').content;
+}
 </script>
 
 
 <style>
-#app {
-    //overflow: hidden !important;
-}
 
 </style>
