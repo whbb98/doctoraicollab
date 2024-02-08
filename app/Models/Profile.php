@@ -72,11 +72,7 @@ class Profile extends Model
     public function getPhoto()
     {
         if ($this->photo == null) {
-            if ($this->user->gender == 'M') {
-                return asset("assets/img/avatar-M.png");
-            } else {
-                return asset("assets/img/avatar-F.png");
-            }
+            return null;
         } else {
             $base64Photo = base64_encode($this->photo);
             return 'data:image/jpeg;base64,' . $base64Photo;
