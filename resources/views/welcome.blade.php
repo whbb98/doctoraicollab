@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Dr_AI_Collab</title>
         <link id="favicon" rel="icon" type="image/png" href="favicon.png">
         @vite('resources/css/main.css')

@@ -1,8 +1,13 @@
 <template>
-    <v-main class="overflow-auto">
+    <v-main class="overflow-y-auto py-10">
         <v-row align="center" justify="center">
             <v-col sm="8" md="7" lg="6">
-                <v-card color="secondary" variant="elevated">
+                <v-card class="card-form" color="secondary" variant="elevated">
+                    <template #loader>
+                        <v-progress-linear
+                        indeterminate
+                        />
+                    </template>
                     <v-card-title align="center"
                                   class="text-h4 text-capitalize text-primary font-weight-bold my-5"
                     >
@@ -103,5 +108,7 @@
 </script>
 
 <style scoped>
-
+.card-form {
+    //max-height: 70vh;
+}
 </style>

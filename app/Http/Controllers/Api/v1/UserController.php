@@ -104,7 +104,7 @@ class UserController extends Controller
         } else {
             $token = $user->createToken('auth_token')->plainTextToken;
             return [
-                'name' => $user->first_name . ' ' . $user->last_name,
+                'auth_user' => new UserResource($user),
                 'auth_token' => $token
             ];
         }
