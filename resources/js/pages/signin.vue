@@ -3,6 +3,12 @@
         <v-row class="parent" align="center" justify="center">
             <v-col sm="8" md="7" lg="6">
                 <v-card color="secondary" variant="elevated">
+                    <template #loader>
+                        <v-progress-linear
+                            v-if="isLoginLoading"
+                            :indeterminate="isLoginLoading"
+                        />
+                    </template>
                     <v-card-title align="center"
                                   class="text-h4 text-capitalize text-primary font-weight-bold my-5"
                     >
@@ -13,6 +19,7 @@
                             <v-row justify="center">
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="username"
                                         name="user"
                                         label="email or username"
                                         prepend-icon="mdi-account"
@@ -20,6 +27,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="userpass"
                                         type="password"
                                         name="password"
                                         label="your password"
@@ -30,7 +38,7 @@
                             <v-btn class="mr-2"
                                    color="primary"
                                    type="submit"
-                                   @click="$router.push('/')"
+                                   @click="loginHandler"
                             >
                                 login
                             </v-btn>
@@ -54,11 +62,32 @@
 </template>
 
 <script setup>
+import {inject, ref} from "vue";
+import axios from "axios";
+import {useMainStore} from "@/stores/mainStore.js";
+import {useRouter} from "vue-router";
 
+const ENV = inject('ENV')
+const username = ref(null)
+const userpass = ref(null)
+const isLoginLoading = ref(false)
+const emit = defineEmits(['openSnackbar'])
+const mainStore = useMainStore()
+const router = useRouter()
+
+async function loginHandler() {
+    isLoginLoading.value = true
+    const loginStatus = await mainStore.login(username.value, userpass.value, ENV.APP_API_URL)
+    emit('openSnackbar', loginStatus)
+    if(mainStore.getAuthToken){
+        router.push('/home')
+    }
+    isLoginLoading.value = false
+}
 </script>
 
 <style scoped>
-.parent{
+.parent {
     height: 90vh;
 }
 </style>
