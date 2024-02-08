@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'joined' => Carbon::parse($this->joined)->format('d-M-Y'),
             'isActive' => $this->is_active ? 'Identified' : 'not identified yet',
             'gender' => $this->gender,
+            'avatar' => $this->profile->getPhoto()
         ];
     }
 }
