@@ -2,8 +2,8 @@
     <v-app-bar elevation="0" color="primary" title="Dr AI Collab" class="px-5">
         <v-avatar color="secondary"
                   class="mr-5" size="40"
-                  image="https://cdn.vuetifyjs.com/images/lists/2.jpg">
-            <span class="text-h5">AR</span>
+                  :image="mainStore.getAuthUser.avatar">
+            <span class="text-h5 text-uppercase">{{ mainStore.getUserNameAbbr }}</span>
         </v-avatar>
         <div>
             <v-btn variant="elevated" :loading="isLogoutLoading" color="secondary" @click="logoutHandler">
