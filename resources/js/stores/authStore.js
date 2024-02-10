@@ -93,9 +93,39 @@ export const useAuthStore = defineStore('authStore', {
         },
         async signup(userObj, APP_API_URL) {
             try {
-
+                const response = await axios.post(
+                    `${APP_API_URL}/users`,
+                    {
+                        ...userObj,
+                        first_name: userObj.firstName,
+                        last_name: userObj.lastName,
+                        birth_date: userObj.birthDate
+                    }
+                )
+                const data = response.data
+                if (data.error) {
+                    return {
+                        open: true,
+                        type: 'error',
+                        title: 'signup failed !',
+                        message: data.error
+                    }
+                } else {
+                    return {
+                        open: true,
+                        type: 'success',
+                        title: 'signup success !',
+                        message: 'account created successfully!'
+                    }
+                }
             } catch (e) {
-
+                const error = e.response.data
+                return {
+                    open: true,
+                    type: 'error',
+                    title: 'signup failed !',
+                    message: error.message
+                }
             }
         }
     }

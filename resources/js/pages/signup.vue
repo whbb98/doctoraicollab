@@ -72,8 +72,9 @@
                                         name="gender"
                                         label="gender"
                                         prepend-icon="mdi-gender-male-female"
-                                        :items="['male','female']"
-                                        :item-value="['M','F']"
+                                        :items="[{ title: 'Male', value: 'M' },{ title: 'Female', value: 'F' }]"
+                                        item-text="title"
+                                        item-value="value"
                                     />
                                 </v-col>
                                 <v-col cols="12">
@@ -113,14 +114,24 @@
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import {inject, reactive, ref} from "vue";
+import {useAuthStore} from "@/stores/authStore.js";
+import {useRouter} from "vue-router";
 
+const ENV = inject('ENV')
+const emit = defineEmits(['openSnackbar'])
+const router = useRouter()
 const isSignupLoading = ref(false)
 const newUser = reactive({})
+const authStore = useAuthStore()
 
-function signupHandler() {
+async function signupHandler() {
     isSignupLoading.value = true
-    console.log(newUser)
+    const signupStatus = await authStore.signup(newUser, ENV.APP_API_URL)
+    emit('openSnackbar', signupStatus)
+    if (signupStatus.type === 'success') {
+        router.push('/login')
+    }
     isSignupLoading.value = false
 }
 </script>
