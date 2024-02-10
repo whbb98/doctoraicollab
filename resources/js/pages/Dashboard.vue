@@ -2,8 +2,8 @@
     <v-app-bar elevation="0" color="primary" title="Dr AI Collab" class="px-5">
         <v-avatar color="secondary"
                   class="mr-5" size="40"
-                  :image="mainStore.getAuthUser.avatar">
-            <span class="text-h5 text-uppercase">{{ mainStore.getUserNameAbbr }}</span>
+                  :image="authStore.getUser?.avatar">
+            <span class="text-h5 text-uppercase">{{ authStore.getAbbreviatedName }}</span>
         </v-avatar>
         <div>
             <v-btn variant="elevated" :loading="isLogoutLoading" color="secondary" @click="logoutHandler">
@@ -49,11 +49,11 @@
 </template>
 
 <script setup>
-import {useMainStore} from "@/stores/mainStore.js";
+import {useAuthStore} from "@/stores/authStore.js";
 import {useRouter} from "vue-router";
 import {inject, ref} from "vue";
 
-const mainStore = useMainStore()
+const authStore = useAuthStore()
 const router = useRouter()
 const ENV = inject('ENV')
 const isLogoutLoading = ref(false)
@@ -61,7 +61,7 @@ const emit = defineEmits(['openSnackbar'])
 
 async function logoutHandler() {
     isLogoutLoading.value = true
-    const logoutStatus = await mainStore.logout(ENV.APP_API_URL)
+    const logoutStatus = await authStore.logout(ENV.APP_API_URL)
     emit('openSnackbar', logoutStatus)
     isLogoutLoading.value = false
 }
