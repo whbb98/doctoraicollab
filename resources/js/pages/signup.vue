@@ -52,11 +52,17 @@
                                 <v-col cols="12">
                                     <v-text-field
                                         v-model="newUser.password"
-                                        type="password"
+                                        :type="isPasswordVisible?'text':'password'"
                                         name="password"
                                         label="your password"
                                         prepend-icon="mdi-lock"
-                                    />
+                                    >
+                                        <template #append-inner>
+                                            <v-icon @click="isPasswordVisible=!isPasswordVisible">
+                                                {{ isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'}}
+                                            </v-icon>
+                                        </template>
+                                    </v-text-field>
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
@@ -124,6 +130,7 @@ const router = useRouter()
 const isSignupLoading = ref(false)
 const newUser = reactive({})
 const authStore = useAuthStore()
+const isPasswordVisible = ref(false)
 
 async function signupHandler() {
     isSignupLoading.value = true
