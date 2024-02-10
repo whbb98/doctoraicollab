@@ -5,7 +5,8 @@
                 <v-card class="card-form" color="secondary" variant="elevated">
                     <template #loader>
                         <v-progress-linear
-                        indeterminate
+                            v-if="isSignupLoading"
+                            :indeterminate="isSignupLoading"
                         />
                     </template>
                     <v-card-title align="center"
@@ -18,6 +19,7 @@
                             <v-row justify="center">
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="newUser.username"
                                         name="username"
                                         label="username"
                                         prepend-icon="mdi-account"
@@ -25,6 +27,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="newUser.firstName"
                                         name="firstName"
                                         label="first name"
                                         prepend-icon="mdi-account"
@@ -32,6 +35,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="newUser.lastName"
                                         name="lastName"
                                         label="last name"
                                         prepend-icon="mdi-account"
@@ -39,6 +43,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="newUser.email"
                                         name="email"
                                         label="email address"
                                         prepend-icon="mdi-at"
@@ -46,6 +51,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="newUser.password"
                                         type="password"
                                         name="password"
                                         label="your password"
@@ -54,6 +60,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="newUser.phone"
                                         name="phone"
                                         label="phone number"
                                         prepend-icon="mdi-phone"
@@ -61,6 +68,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-select
+                                        v-model="newUser.gender"
                                         name="gender"
                                         label="gender"
                                         prepend-icon="mdi-gender-male-female"
@@ -70,6 +78,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="newUser.birthDate"
                                         type="date"
                                         name="birthDate"
                                         label="birth date"
@@ -80,7 +89,7 @@
                             <v-btn class="mr-2"
                                    color="primary"
                                    type="submit"
-                                   @click="$router.push('/signin')"
+                                   @click="signupHandler"
                             >
                                 signup
                             </v-btn>
@@ -104,7 +113,16 @@
 </template>
 
 <script setup>
+import {reactive, ref} from "vue";
 
+const isSignupLoading = ref(false)
+const newUser = reactive({})
+
+function signupHandler() {
+    isSignupLoading.value = true
+    console.log(newUser)
+    isSignupLoading.value = false
+}
 </script>
 
 <style scoped>

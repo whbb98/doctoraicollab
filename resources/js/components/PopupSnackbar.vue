@@ -1,5 +1,5 @@
 <template>
-    <v-snackbar v-model="isPopupOpened" :color="popupColor">
+    <v-snackbar v-model="isPopupOpened" :color="popupColor" location="top">
         <div class="text-capitalize font-weight-bold text-subtitle-1 pb-2">
             {{popupTitle}}
         </div>

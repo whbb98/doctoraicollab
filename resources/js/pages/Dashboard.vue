@@ -2,7 +2,7 @@
     <v-app-bar elevation="0" color="primary" title="Dr AI Collab" class="px-5">
         <v-avatar color="secondary"
                   class="mr-5" size="40"
-                  :image="authStore.getUser.avatar">
+                  :image="authStore.getUser?.avatar">
             <span class="text-h5 text-uppercase">{{ authStore.getAbbreviatedName }}</span>
         </v-avatar>
         <div>

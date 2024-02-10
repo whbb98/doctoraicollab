@@ -14,7 +14,7 @@ export const useAuthStore = defineStore('authStore', {
             return this.user
         },
         getAbbreviatedName() {
-            return this.getUser.firstName.charAt(0) + this.getUser.lastName.charAt(0)
+            return this.getUser?.firstName.charAt(0) + this.getUser?.lastName.charAt(0)
         }
     },
     actions: {
@@ -89,6 +89,13 @@ export const useAuthStore = defineStore('authStore', {
                     title: 'logout failed !',
                     message: error.message
                 }
+            }
+        },
+        async signup(userObj, APP_API_URL) {
+            try {
+
+            } catch (e) {
+
             }
         }
     }
