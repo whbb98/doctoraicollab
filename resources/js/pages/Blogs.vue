@@ -64,6 +64,7 @@ import {onMounted, reactive, ref} from "vue";
 import BlogCard from "@/components/BlogCard.vue";
 import BlogForm from "@/components/BlogForm.vue";
 
+const emit = defineEmits(['openSnackbar'])
 const filterBy = ref('all')
 const blogs = [
     {

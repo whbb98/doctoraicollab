@@ -28,11 +28,17 @@
                                 <v-col cols="12">
                                     <v-text-field
                                         v-model="userpass"
-                                        type="password"
+                                        :type="isPasswordVisible?'text':'password'"
                                         name="password"
                                         label="your password"
                                         prepend-icon="mdi-lock"
-                                    />
+                                    >
+                                        <template #append-inner>
+                                            <v-icon @click="isPasswordVisible=!isPasswordVisible">
+                                                {{ isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off' }}
+                                            </v-icon>
+                                        </template>
+                                    </v-text-field>
                                 </v-col>
                             </v-row>
                             <v-btn class="mr-2"
@@ -73,12 +79,13 @@ const isLoginLoading = ref(false)
 const emit = defineEmits(['openSnackbar'])
 const authStore = useAuthStore()
 const router = useRouter()
+const isPasswordVisible = ref(false)
 
 async function loginHandler() {
     isLoginLoading.value = true
     const loginStatus = await authStore.login(username.value, userpass.value, ENV.APP_API_URL)
     emit('openSnackbar', loginStatus)
-    if(authStore.getAuthToken){
+    if (authStore.getAuthToken) {
         router.push('/home')
     }
     isLoginLoading.value = false

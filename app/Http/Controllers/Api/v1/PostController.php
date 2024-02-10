@@ -48,7 +48,8 @@ class PostController extends Controller
             }
         }
         return [
-            'success' => 'post inserted successfully!'
+            'success' => 'post inserted successfully!',
+            'post' => new PostResource($post)
         ];
     }
 
