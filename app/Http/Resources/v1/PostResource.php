@@ -15,7 +15,7 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        if(!$this->resource){
+        if (!$this->resource) {
             return [];
         }
         return [
@@ -25,7 +25,8 @@ class PostResource extends JsonResource
             'description' => $this->description,
             'user_id' => $this->user_id,
             'interactions' => $this->postInteractions->makeHidden(['post_id']),
-            'comments' => PostCommentResource::collection($this->postComments)
+            'comments' => PostCommentResource::collection($this->postComments),
+            'files' => FileResource::collection($this->postData)
         ];
     }
 }
