@@ -26,7 +26,7 @@ class CreatePostRequest extends FormRequest
         return [
             'visibility' => ['sometimes', 'required', 'boolean'],
             'description' => ['required', 'max:255'],
-            'files.*' => ['sometimes', 'required', 'mimes:jpg,png,pdf,csv']
+            'files.*' => ['sometimes', 'required', 'mimes:jpg,jpeg,png,gif']
         ];
     }
 

@@ -1,13 +1,17 @@
 import {defineStore} from "pinia";
 import axios from "axios";
 import {useAuthStore} from "@/stores/authStore.js";
-import {da} from "vuetify/locale";
+import {useMainStore} from "@/stores/mainStore.js";
 
 export const usePostsStore = defineStore('postsStore', {
     state: () => ({
         posts: []
     }),
-    getters: {},
+    getters: {
+        getPosts() {
+            return this.posts
+        }
+    },
     actions: {
         async fetchPosts(APP_API_URL) {
             const response = await axios.get(`${APP_API_URL}/posts`, {
@@ -19,7 +23,7 @@ export const usePostsStore = defineStore('postsStore', {
             if (data.error) {
                 console.error(data.error)
             } else {
-                return data
+                this.posts = data
             }
         },
         async createNewPost(APP_API_URL, postObj) {
@@ -40,6 +44,7 @@ export const usePostsStore = defineStore('postsStore', {
                     })
                 const data = response.data
                 if (data.success) {
+                    this.posts.data.unshift(data.post)
                     return {
                         open: true,
                         type: 'success',
@@ -47,7 +52,12 @@ export const usePostsStore = defineStore('postsStore', {
                         message: data.success
                     }
                 } else {
-                    console.warn(data)
+                    return {
+                        open: true,
+                        type: 'error',
+                        title: 'new post',
+                        message: 'error while creating post!'
+                    }
                 }
             } catch (e) {
                 const error = e.response.data
@@ -56,6 +66,40 @@ export const usePostsStore = defineStore('postsStore', {
                     type: 'error',
                     title: 'post creation failed!',
                     message: error.message
+                }
+            }
+        },
+        async deletePost(APP_API_URL, postID) {
+            const postIndex = this.posts.data.findIndex(item => item.id === postID)
+            try {
+                const response = await axios.delete(`${APP_API_URL}/posts/${postID}`, {
+                    headers: {
+                        Authorization: `Bearer ${useAuthStore().getAuthToken}`,
+                    }
+                })
+                const data = response.data
+                if (data.success) {
+                    this.posts.data.splice(postIndex, 1)
+                    return {
+                        open: true,
+                        type: 'success',
+                        title: 'post deletion!',
+                        message: data.success
+                    }
+                } else {
+                    return {
+                        open: true,
+                        type: 'error',
+                        title: 'post deletion!',
+                        message: data.error
+                    }
+                }
+            } catch (e) {
+                return {
+                    open: true,
+                    type: 'error',
+                    title: 'post deletion!',
+                    message: 'error while deleting post'
                 }
             }
         }

@@ -1,37 +1,30 @@
 <template>
-    <v-card>
+    <v-card class="mb-5">
+        <template #loader>
+            <v-progress-linear v-if="isDeleteLoading" :indeterminate="isDeleteLoading" color="warning"/>
+        </template>
         <v-card-title>
-            <v-avatar class="mr-2" color="secondary" size="50" image="https://i.pravatar.cc/50">
-                <span class="text-h5">AR</span>
+            <v-avatar class="mr-2" color="secondary" size="50" :image="post.avatar">
+                <span class="text-h5 text-uppercase">
+                    {{ post.abbreviatedName }}
+                </span>
             </v-avatar>
-            <span>john doe</span>
+            <span class="text-capitalize">{{ post.userFullName }}</span>
+            <v-btn class="delete-btn" variant="text" color="transparent" @click="handleDeletePost(post.id)">
+                <v-icon size="30" color="error">mdi-delete-circle</v-icon>
+            </v-btn>
         </v-card-title>
-        <v-card-subtitle>{{ new Date() }}</v-card-subtitle>
-        <v-list title="Attachments" class="d-flex">
-            <v-list-item prepend-icon="mdi-file">file one</v-list-item>
-            <v-list-item prepend-icon="mdi-file">file two</v-list-item>
-        </v-list>
-        <v-container class="d-flex">
+        <v-card-subtitle>On: {{ post.datetime }}</v-card-subtitle>
+        <v-container class="d-flex" v-if="post.files.length > 0">
             <v-carousel show-arrows="hover">
                 <v-carousel-item
-                    src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-                    cover
-                ></v-carousel-item>
-
-                <v-carousel-item
-                    src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg"
-                    cover
-                ></v-carousel-item>
-
-                <v-carousel-item
-                    src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                    cover
-                ></v-carousel-item>
+                    v-for="file in post.files"
+                    :src="file.base64"
+                />
             </v-carousel>
         </v-container>
         <v-card-text>
-            Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta nisl dico
-            aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.
+            {{ post.description }}
         </v-card-text>
         <v-card-actions>
             <v-btn :color="true?'red':'primary'">
@@ -62,10 +55,23 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {inject, ref} from "vue";
 import UserCommentCard from "@/components/UserCommentCard.vue";
+import {usePostsStore} from "@/stores/postsStore.js";
 
+const emit = defineEmits('openSnackbar')
+const props = defineProps(['post'])
+const ENV = inject('ENV')
 const isCommentOpen = ref(false)
+const isDeleteLoading = ref(false)
+const postsStore = usePostsStore()
+
+async function handleDeletePost(id) {
+    isDeleteLoading.value = true
+    const deleteStatus = await postsStore.deletePost(ENV.APP_API_URL, id)
+    emit('openSnackbar', deleteStatus)
+    isDeleteLoading.value = false
+}
 
 const userComments = [
     {
@@ -99,5 +105,11 @@ const userComments = [
 .comments {
     max-height: 200px;
     overflow: auto;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
 }
 </style>

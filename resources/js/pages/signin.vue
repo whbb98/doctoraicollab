@@ -35,7 +35,7 @@
                                     >
                                         <template #append-inner>
                                             <v-icon @click="isPasswordVisible=!isPasswordVisible">
-                                                {{ isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'}}
+                                                {{ isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off' }}
                                             </v-icon>
                                         </template>
                                     </v-text-field>
@@ -85,7 +85,7 @@ async function loginHandler() {
     isLoginLoading.value = true
     const loginStatus = await authStore.login(username.value, userpass.value, ENV.APP_API_URL)
     emit('openSnackbar', loginStatus)
-    if(authStore.getAuthToken){
+    if (authStore.getAuthToken) {
         router.push('/home')
     }
     isLoginLoading.value = false

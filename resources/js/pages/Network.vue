@@ -75,6 +75,7 @@
 
 import ProfileCard from "@/components/ProfileCard.vue";
 
+const emit = defineEmits(['openSnackbar'])
 const users = [
     {
         username: 'ouahab98',
@@ -121,12 +122,12 @@ const users = [
 
 const cities = [
     {
-        id:31,
-        name:'Oran'
+        id: 31,
+        name: 'Oran'
     },
     {
-        id:32,
-        name:'El bayadh'
+        id: 32,
+        name: 'El bayadh'
     }
 ]
 </script>
