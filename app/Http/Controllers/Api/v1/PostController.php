@@ -8,6 +8,7 @@ use App\Http\Requests\v1\PostCommentRequest;
 use App\Http\Requests\v1\PostInteractionRequest;
 use App\Http\Requests\v1\UpdatePostRequest;
 use App\Http\Resources\v1\PostCollection;
+use App\Http\Resources\v1\PostCommentResource;
 use App\Http\Resources\v1\PostResource;
 use App\Models\Post;
 use App\Models\PostComments;
@@ -171,13 +172,15 @@ class PostController extends Controller
         if (!$postComment) {
             $postComment = $post->postComments()->create($request->all());
             return [
-                'success' => 'post comment created successfully!'
+                'success' => 'post comment created successfully!',
+                'comment' => new PostCommentResource($postComment)
             ];
         } else {
             if ($user->id == $postComment->user_id) {
                 $postComment->update($request->except('user_id', 'post_id'));
                 return [
-                    'success' => 'post comment updated successfully!'
+                    'success' => 'post comment updated successfully!',
+                    'comment' => new PostCommentResource($postComment)
                 ];
             }
         }
