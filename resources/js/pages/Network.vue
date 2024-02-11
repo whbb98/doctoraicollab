@@ -75,7 +75,6 @@
 
 import ProfileCard from "@/components/ProfileCard.vue";
 
-const emit = defineEmits(['openSnackbar'])
 const users = [
     {
         username: 'ouahab98',

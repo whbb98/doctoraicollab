@@ -130,7 +130,6 @@ import CareerInfo from "@/components/Profile/CareerInfo.vue";
 import NotificationsSettings from "@/components/Profile/NotificationsSettings.vue";
 import AccountSettings from "@/components/Profile/AccountSettings.vue";
 
-const emit = defineEmits(['openSnackbar'])
 const tab = ref(null)
 
 const users = [

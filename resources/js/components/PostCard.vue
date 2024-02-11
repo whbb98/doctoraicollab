@@ -59,7 +59,6 @@ import {inject, ref} from "vue";
 import UserCommentCard from "@/components/UserCommentCard.vue";
 import {usePostsStore} from "@/stores/postsStore.js";
 
-const emit = defineEmits('openSnackbar')
 const props = defineProps(['post'])
 const ENV = inject('ENV')
 const isCommentOpen = ref(false)
@@ -68,8 +67,7 @@ const postsStore = usePostsStore()
 
 async function handleDeletePost(id) {
     isDeleteLoading.value = true
-    const deleteStatus = await postsStore.deletePost(ENV.APP_API_URL, id)
-    emit('openSnackbar', deleteStatus)
+    await postsStore.deletePost(ENV.APP_API_URL, id)
     isDeleteLoading.value = false
 }
 

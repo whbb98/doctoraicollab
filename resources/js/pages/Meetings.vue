@@ -60,7 +60,6 @@
 import {onMounted, reactive, ref} from "vue";
 import MeetingCard from "@/components/MeetingCard.vue";
 
-const emit = defineEmits(['openSnackbar'])
 const filterBy = ref('all')
 const meetingsCount = reactive({
     all: 0,

@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import axios from "axios";
 import {useAuthStore} from "@/stores/authStore.js";
-import {useMainStore} from "@/stores/mainStore.js";
+import {useNotificationsStore} from "@/stores/notificationsStore.js";
 
 export const usePostsStore = defineStore('postsStore', {
     state: () => ({
@@ -27,6 +27,7 @@ export const usePostsStore = defineStore('postsStore', {
             }
         },
         async createNewPost(APP_API_URL, postObj) {
+            const notificationsStore = useNotificationsStore()
             try {
                 const formData = new FormData()
                 formData.append('description', postObj.description ?? '')
@@ -45,31 +46,32 @@ export const usePostsStore = defineStore('postsStore', {
                 const data = response.data
                 if (data.success) {
                     this.posts.data.unshift(data.post)
-                    return {
+                    notificationsStore.setPopupNotification({
                         open: true,
                         type: 'success',
                         title: 'new post',
                         message: data.success
-                    }
+                    })
                 } else {
-                    return {
+                    notificationsStore.setPopupNotification({
                         open: true,
                         type: 'error',
                         title: 'new post',
                         message: 'error while creating post!'
-                    }
+                    })
                 }
             } catch (e) {
                 const error = e.response.data
-                return {
+                notificationsStore.setPopupNotification({
                     open: true,
                     type: 'error',
                     title: 'post creation failed!',
                     message: error.message
-                }
+                })
             }
         },
         async deletePost(APP_API_URL, postID) {
+            const notificationsStore = useNotificationsStore()
             const postIndex = this.posts.data.findIndex(item => item.id === postID)
             try {
                 const response = await axios.delete(`${APP_API_URL}/posts/${postID}`, {
@@ -80,27 +82,28 @@ export const usePostsStore = defineStore('postsStore', {
                 const data = response.data
                 if (data.success) {
                     this.posts.data.splice(postIndex, 1)
-                    return {
+                    notificationsStore.setPopupNotification({
                         open: true,
                         type: 'success',
                         title: 'post deletion!',
                         message: data.success
-                    }
+                    })
                 } else {
-                    return {
+                    notificationsStore.setPopupNotification({
                         open: true,
                         type: 'error',
                         title: 'post deletion!',
                         message: data.error
-                    }
+                    })
                 }
             } catch (e) {
-                return {
+                console.error(e)
+                notificationsStore.setPopupNotification({
                     open: true,
                     type: 'error',
                     title: 'post deletion!',
                     message: 'error while deleting post'
-                }
+                })
             }
         }
     }

@@ -1,5 +1,5 @@
 <template>
-    <PostForm @open-snackbar="openSnackBar"/>
+    <PostForm/>
     <v-alert
         v-if="postsStore.getPosts.length <= 0"
         type="info"
@@ -18,7 +18,7 @@
             <v-progress-circular :indeterminate="isPostsLoading"/>
         </template>
     </v-alert>
-    <PostCard @open-snackbar="openSnackBar" v-for="post in posts" :post="post"/>
+    <PostCard v-for="post in posts" :post="post"/>
 </template>
 
 <script setup>
@@ -29,16 +29,11 @@ import {usePostsStore} from "@/stores/postsStore.js";
 import {computed, inject, onMounted, ref} from "vue";
 
 const ENV = inject('ENV')
-const emit = defineEmits(['openSnackbar'])
 const postsStore = usePostsStore()
 const isPostsLoading = ref(false)
 const posts = computed(() => {
     return postsStore.getPosts.data
 })
-
-function openSnackBar(payload) {
-    emit('openSnackbar', payload)
-}
 
 onMounted(async () => {
     isPostsLoading.value = true

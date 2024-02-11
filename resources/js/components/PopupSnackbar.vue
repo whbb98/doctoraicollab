@@ -1,5 +1,5 @@
 <template>
-    <v-snackbar v-model="isPopupOpened" :color="popupColor" location="top">
+    <v-snackbar :timeout="notificationsStore.getPopupTimeout" v-model="isPopupOpened" :color="popupColor" location="top">
         <div class="text-capitalize font-weight-bold text-subtitle-1 pb-2">
             {{popupTitle}}
         </div>
@@ -14,23 +14,27 @@
 
 <script setup>
 import {ref, watch} from "vue";
+import {useNotificationsStore} from "@/stores/notificationsStore.js";
 
 const props = defineProps(['data'])
 const isPopupOpened = ref(null)
 const popupColor = ref(null)
 const popupTitle = ref(null)
 const popupMessage = ref(null)
+const notificationsStore = useNotificationsStore()
 const colors = {
     success: 'primary',
     error: 'error',
     info: 'secondary',
     warning: 'warning'
 }
-watch(() => props.data, (newData) => {
-    isPopupOpened.value = newData.open
-    popupTitle.value = newData.title
-    popupMessage.value = newData.message
-    popupColor.value = colors[newData.type]
+
+watch(notificationsStore.getPopupNotification, (newVal) => {
+    isPopupOpened.value = newVal.open
+    popupTitle.value = newVal.title
+    popupMessage.value = newVal.message
+    popupColor.value = colors[newVal.type]
+    console.log(newVal)
 })
 
 </script>
