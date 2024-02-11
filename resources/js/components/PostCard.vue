@@ -41,14 +41,23 @@
             </v-btn>
         </v-card-actions>
         <v-card v-if="isCommentOpen">
-            <v-container>
-                <v-form @submit.prevent class="d-flex align-center">
-                    <v-text-field name="comment" clearable label="Your Comment"
-                                  prepend-icon="mdi-comment"></v-text-field>
+            <v-container class="py-0">
+                <v-form @submit.prevent="handlePostComment(post.id)" class="d-flex align-center">
+                    <v-text-field :loading="isCommentLoading"
+                                  v-model="postCommentText"
+                                  @click:clear="postCommentID = null"
+                                  clearable
+                                  label="Your Comment"
+                                  :prepend-icon="postCommentID?'mdi-tooltip-edit':'mdi-comment'"></v-text-field>
                 </v-form>
             </v-container>
             <v-container class="comments">
-                <user-comment-card v-for="item in userComments" :userComment="item"/>
+                <user-comment-card v-for="comment in post.comments"
+                                   :key="comment.id"
+                                   :comment="comment"
+                                   @update-comment="handleUpdateComment"
+                                   @delete-comment="handleDeleteComment"
+                />
             </v-container>
         </v-card>
     </v-card>
@@ -64,6 +73,9 @@ const ENV = inject('ENV')
 const isCommentOpen = ref(false)
 const isDeleteLoading = ref(false)
 const postsStore = usePostsStore()
+const isCommentLoading = ref(false)
+const postCommentText = ref('')
+const postCommentID = ref(null)
 
 async function handleDeletePost(id) {
     isDeleteLoading.value = true
@@ -71,32 +83,26 @@ async function handleDeletePost(id) {
     isDeleteLoading.value = false
 }
 
-const userComments = [
-    {
-        id: 1,
-        nameAbbr: 'AR',
-        fullName: 'abdelouahab radja',
-        avatar: 'https://i.pravatar.cc/50',
-        commentDate: new Date().toDateString() + '14:52',
-        commentText: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
-    },
-    {
-        id: 2,
-        nameAbbr: 'AS',
-        fullName: 'amine smahi',
-        avatar: 'https://i.pravatar.cc/50',
-        commentDate: new Date().toDateString() + '14:52',
-        commentText: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
-    },
-    {
-        id: 3,
-        nameAbbr: 'ob',
-        fullName: 'oussama bonnor',
-        // avatar: 'https://i.pravatar.cc/50',
-        commentDate: new Date().toDateString() + '14:52',
-        commentText: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
+async function handlePostComment(postID) {
+    if (postCommentText.value?.trim().length <= 0) {
+        return
     }
-]
+    isCommentLoading.value = true
+    await postsStore.handlePostComment(ENV.APP_API_URL, postID, postCommentID.value, postCommentText.value?.trim())
+    postCommentText.value = ''
+    postCommentID.value = null
+    isCommentLoading.value = false
+}
+
+async function handleUpdateComment(id, text) {
+    postCommentText.value = text
+    postCommentID.value = id
+}
+
+async function handleDeleteComment(id) {
+    console.log('deleting post comments will be added soon')
+}
+
 </script>
 
 <style scoped>

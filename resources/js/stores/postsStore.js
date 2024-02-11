@@ -52,6 +52,7 @@ export const usePostsStore = defineStore('postsStore', {
                         title: 'new post',
                         message: data.success
                     })
+                    return true
                 } else {
                     notificationsStore.setPopupNotification({
                         open: true,
@@ -59,6 +60,7 @@ export const usePostsStore = defineStore('postsStore', {
                         title: 'new post',
                         message: 'error while creating post!'
                     })
+                    return false
                 }
             } catch (e) {
                 const error = e.response.data
@@ -105,6 +107,58 @@ export const usePostsStore = defineStore('postsStore', {
                     message: 'error while deleting post'
                 })
             }
-        }
+        },
+        async handlePostComment(APP_API_URL, postID, commentID, commentText) {
+            const notificationsStore = useNotificationsStore()
+            try {
+                const response = await axios.post(`${APP_API_URL}/posts/${postID}/postComment`, {
+                    comment_id: commentID !== null ? commentID : undefined,
+                    comment: commentText
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${useAuthStore().getAuthToken}`,
+                    }
+                })
+                const data = response.data
+                if (data.success) {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        type: 'success',
+                        title: 'post comment!',
+                        message: data.success
+                    })
+                    const postItem = this.posts.data.find(post => post.id === postID)
+                    if (commentID !== null) {
+                        const commentIndex = postItem.comments.findIndex(comment => comment.id === commentID)
+                        postItem.comments.splice(commentIndex, 1)
+                        postItem.comments.unshift(data.comment)
+                    } else {
+                        postItem.comments.unshift(data.comment)
+                    }
+                } else {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        type: 'error',
+                        title: 'post comment!',
+                        message: data.message
+                    })
+                }
+            } catch (e) {
+                notificationsStore.setPopupNotification({
+                    open: true,
+                    type: 'error',
+                    title: 'post comment!',
+                    message: 'error while creating post comment!'
+                })
+            }
+        },
+        async deleteComment(APP_API_URL, commentID) {
+            // I forgot to add the logic of deleting comments in the backend, so I'll add it later
+            try {
+
+            } catch (e) {
+
+            }
+        },
     }
 })

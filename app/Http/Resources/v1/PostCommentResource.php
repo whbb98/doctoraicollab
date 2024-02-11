@@ -21,6 +21,8 @@ class PostCommentResource extends JsonResource
             'id' => $this->id,
             'comment' => $this->comment,
             'user' => $user->username,
+            'abbreviatedName' => $user->first_name[0] . $user->last_name[0],
+            'avatar' => $user->profile->getPhoto(),
             'fullName' => $user->first_name . ' ' . $user->last_name,
             'datetime' => Carbon::parse($this->datetime)->format('Y-M-d H:i')
         ];

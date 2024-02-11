@@ -29,7 +29,7 @@ class PostResource extends JsonResource
             'abbreviatedName' => $user->first_name[0] . $user->last_name[0],
             'avatar' => $user->profile->getPhoto(),
             'interactions' => $this->postInteractions->makeHidden(['post_id']),
-            'comments' => PostCommentResource::collection($this->postComments),
+            'comments' => PostCommentResource::collection($this->postComments->sortByDesc('datetime')),
             'files' => FileResource::collection($this->postData)
         ];
     }

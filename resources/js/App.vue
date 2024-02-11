@@ -28,11 +28,11 @@ const popupData = reactive({
 })
 
 watch(notificationsStore.getPopupNotification, (newVal) => {
+    popupData.id = newVal.id
     popupData.open = newVal.open
     popupData.title = newVal.title
     popupData.message = newVal.message
     popupData.type = newVal.type
-    console.log(newVal)
 })
 
 function getCsrfToken() {

@@ -53,7 +53,12 @@ const isPostLoading = ref(false)
 
 async function uploadPost() {
     isPostLoading.value = true
-    await postsStore.createNewPost(ENV.APP_API_URL, post)
+    const status = await postsStore.createNewPost(ENV.APP_API_URL, post)
+    if (status) {
+        post.description = ''
+        post.files = null
+        post.visibility = false
+    }
     isPostLoading.value = false
 }
 </script>
