@@ -125,7 +125,6 @@ import {useAuthStore} from "@/stores/authStore.js";
 import {useRouter} from "vue-router";
 
 const ENV = inject('ENV')
-const emit = defineEmits(['openSnackbar'])
 const router = useRouter()
 const isSignupLoading = ref(false)
 const newUser = reactive({})
@@ -135,8 +134,7 @@ const isPasswordVisible = ref(false)
 async function signupHandler() {
     isSignupLoading.value = true
     const signupStatus = await authStore.signup(newUser, ENV.APP_API_URL)
-    emit('openSnackbar', signupStatus)
-    if (signupStatus.type === 'success') {
+    if (signupStatus) {
         router.push('/login')
     }
     isSignupLoading.value = false

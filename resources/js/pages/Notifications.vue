@@ -47,7 +47,6 @@
 import {reactive, ref} from "vue";
 import NotificationCard from "@/components/NotificationCard.vue";
 
-const emit = defineEmits(['openSnackbar'])
 const filterBy = ref('all')
 const unreadCount = ref(0)
 const dummyData = reactive([

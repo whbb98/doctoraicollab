@@ -7,7 +7,6 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['openSnackbar'])
 </script>
 
 <style scoped>

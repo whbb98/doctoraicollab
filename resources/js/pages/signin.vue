@@ -76,15 +76,13 @@ const ENV = inject('ENV')
 const username = ref(null)
 const userpass = ref(null)
 const isLoginLoading = ref(false)
-const emit = defineEmits(['openSnackbar'])
 const authStore = useAuthStore()
 const router = useRouter()
 const isPasswordVisible = ref(false)
 
 async function loginHandler() {
     isLoginLoading.value = true
-    const loginStatus = await authStore.login(username.value, userpass.value, ENV.APP_API_URL)
-    emit('openSnackbar', loginStatus)
+    await authStore.login(username.value, userpass.value, ENV.APP_API_URL)
     if (authStore.getAuthToken) {
         router.push('/home')
     }

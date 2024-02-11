@@ -47,20 +47,13 @@ import {usePostsStore} from "@/stores/postsStore.js";
 import {inject, reactive, ref} from "vue";
 
 const ENV = inject('ENV')
-const emit = defineEmits(['openSnackbar'])
 const postsStore = usePostsStore()
 const post = reactive({})
 const isPostLoading = ref(false)
 
 async function uploadPost() {
     isPostLoading.value = true
-    const postStatus = await postsStore.createNewPost(ENV.APP_API_URL, post)
-    emit('openSnackbar', postStatus)
-    if (postStatus.type === 'success') {
-        post.description = ''
-        post.visibility = false
-        post.files = null
-    }
+    await postsStore.createNewPost(ENV.APP_API_URL, post)
     isPostLoading.value = false
 }
 </script>

@@ -43,7 +43,7 @@
     </v-navigation-drawer>
     <v-main class="bg-secondary overflow-auto">
         <v-container>
-            <router-view @open-snackbar="openSnackbar"/>
+            <router-view/>
         </v-container>
     </v-main>
 </template>
@@ -57,18 +57,13 @@ const authStore = useAuthStore()
 const router = useRouter()
 const ENV = inject('ENV')
 const isLogoutLoading = ref(false)
-const emit = defineEmits(['openSnackbar'])
 
 async function logoutHandler() {
     isLogoutLoading.value = true
     const logoutStatus = await authStore.logout(ENV.APP_API_URL)
-    openSnackbar(logoutStatus)
     isLogoutLoading.value = false
 }
 
-function openSnackbar(payload) {
-    emit('openSnackbar', payload)
-}
 </script>
 
 

@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <router-view @open-snackbar="openSnackbarPopup"/>
+        <router-view/>
         <v-footer order="0" app color="dark">
             <h1>footer</h1>
         </v-footer>
@@ -9,8 +9,9 @@
 </template>
 
 <script setup>
-import {provide, ref} from "vue";
+import {computed, provide, reactive, ref, watch, watchEffect} from "vue";
 import PopupSnackbar from "@/components/PopupSnackbar.vue";
+import {useNotificationsStore} from "@/stores/notificationsStore.js";
 
 const ENV = {
     APP_URL: import.meta.env.VITE_APP_URL,
@@ -18,19 +19,21 @@ const ENV = {
     getCsrfToken: getCsrfToken()
 }
 provide('ENV', ENV)
-
-const popupData = ref({
+const notificationsStore = useNotificationsStore()
+const popupData = reactive({
     open: false,
     title: '',
     message: '',
     type: ''
-});
+})
 
-function openSnackbarPopup(data) {
-    if (data) {
-        popupData.value = data
-    }
-}
+watch(notificationsStore.getPopupNotification, (newVal) => {
+    popupData.open = newVal.open
+    popupData.title = newVal.title
+    popupData.message = newVal.message
+    popupData.type = newVal.type
+    console.log(newVal)
+})
 
 function getCsrfToken() {
     return document.head.querySelector('meta[name="csrf-token"]').content;
