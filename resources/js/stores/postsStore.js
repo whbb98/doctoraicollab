@@ -14,16 +14,33 @@ export const usePostsStore = defineStore('postsStore', {
     },
     actions: {
         async fetchPosts(APP_API_URL) {
-            const response = await axios.get(`${APP_API_URL}/posts`, {
-                headers: {
-                    Authorization: `Bearer ${useAuthStore().getAuthToken}`
+            const notificationsStore = useNotificationsStore()
+            try {
+                const response = await axios.get(`${APP_API_URL}/posts`, {
+                    headers: {
+                        Authorization: `Bearer ${useAuthStore().getAuthToken}`
+                    }
+                })
+                const data = response.data
+                console.log(data)
+                if (data.error) {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        type: 'error',
+                        title: 'Posts',
+                        message: data?.message ?? 'Error while loading posts data',
+                    })
+                } else {
+                    this.posts = data
                 }
-            })
-            const data = response.data
-            if (data.error) {
-                console.error(data.error)
-            } else {
-                this.posts = data
+            } catch (e) {
+                const error = e.response.data
+                notificationsStore.setPopupNotification({
+                    open: true,
+                    type: 'error',
+                    title: 'Posts loading',
+                    message: error.message ?? 'Error while loading posts data',
+                })
             }
         },
         async createNewPost(APP_API_URL, postObj) {
