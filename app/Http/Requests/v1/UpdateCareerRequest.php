@@ -45,7 +45,6 @@ class UpdateCareerRequest extends FormRequest
 
     protected function passedValidation()
     {
-        //this will be replaced by sanctum soon
         $this->merge([
             'user_id' => Auth::user()->id
         ]);

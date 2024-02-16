@@ -11,6 +11,12 @@ import Signin from "@/pages/signin.vue";
 import Signup from "@/pages/signup.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import {useAuthStore} from "@/stores/authStore.js";
+import {useProfileStore} from "@/stores/profileStore.js";
+
+const ENV = {
+    APP_URL: import.meta.env.VITE_APP_URL,
+    APP_API_URL: import.meta.env.VITE_APP_API_URL,
+}
 
 const router = createRouter({
     history: createWebHistory(),
@@ -30,7 +36,18 @@ const router = createRouter({
                     path: '/profile',
                     name: 'Profile',
                     component: Profile,
-                    meta: {requiresAuth: true}
+                    meta: {requiresAuth: true},
+                    async beforeEnter(to, from, next) {
+                        const profileStore = useProfileStore()
+                        if (profileStore.getAuthUserProfile === null) {
+                            await profileStore.fetchAuthUserProfile(ENV.APP_API_URL)
+                        }
+                        if (profileStore.getAuthUserProfile !== null) {
+                            next(true)
+                        } else {
+                            next(false)
+                        }
+                    }
                 },
                 {
                     path: '/profile/:username',

@@ -37,7 +37,9 @@ const posts = computed(() => {
 
 onMounted(async () => {
     isPostsLoading.value = true
-    await postsStore.fetchPosts(ENV.APP_API_URL)
+    if (postsStore.getPosts.length === 0) {
+        await postsStore.fetchPosts(ENV.APP_API_URL)
+    }
     isPostsLoading.value = false
 })
 

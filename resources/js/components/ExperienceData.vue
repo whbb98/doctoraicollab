@@ -7,22 +7,34 @@
                       item-value="id"
                       :sort-by="[{ key: 'period', order: 'desc' }]"
                       v-model="selectedRow"
+                      select-strategy="single"
         >
         </v-data-table>
-        <v-btn class="text-capitalize" variant="outlined" color="warning">delete selected</v-btn>
+        <v-btn v-if="selectedRow.length>0"
+               class="text-capitalize"
+               variant="elevated"
+               color="error"
+               @click="handleDeleteCareer"
+        >
+            delete
+        </v-btn>
     </v-container>
 </template>
 
 <script setup>
 
-import {ref} from "vue";
+import {computed, inject, ref, watch} from "vue";
+import {useProfileStore} from "@/stores/profileStore.js";
 
+const emit = defineEmits(['selectRow'])
+const ENV = inject('ENV')
 const selectedRow = ref([])
-
+let selectedRowObj = null
+const profileStore = useProfileStore()
 const headers = [
     {
         title: 'name',
-        key: 'name',
+        key: 'career_name',
     },
     {
         title: 'type',
@@ -38,33 +50,24 @@ const headers = [
     },
 
 ]
-const items = [
-    {
-        id: 98,
-        name: 'Bsc Degree in Mathematics',
-        type: 'education',
-        organization: 'university of oran 1',
-        period: new Date('1998-11-15'),
+const items = computed(() => {
+    return profileStore.getAuthUserProfile.career
+})
 
-    },
-    {
-        id: 10,
-        name: 'Msc Degree in Computer Science',
-        type: 'education',
-        organization: 'university of oran 1',
-        period: new Date(Date() + 5000),
+watch(selectedRow, (newVal) => {
+    const selectedItem = items.value.find(item => item.id === newVal[0])
+    selectedRowObj = selectedItem
+    emit('selectRow', selectedItem)
+})
 
-    },
-    {
-        id: 3,
-        name: 'Bsc Degree in Mathematics',
-        type: 'education',
-        organization: 'university of oran 1',
-        period: new Date('1998-11-15'),
-
+function handleDeleteCareer() {
+    if (selectedRowObj) {
+        const status = profileStore.deleteCareer(ENV.APP_API_URL, selectedRowObj.id)
+        if (status) {
+            selectedRow.value = []
+        }
     }
-]
-
+}
 </script>
 
 

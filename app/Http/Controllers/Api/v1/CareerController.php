@@ -17,7 +17,8 @@ class CareerController extends Controller
      */
     public function index()
     {
-//        return new CareerCollection(Career::paginate());
+        $user = Auth::user();
+        return new CareerCollection($user->career);
     }
 
     /**
@@ -65,8 +66,18 @@ class CareerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Career $career)
+    public function destroy($id)
     {
-        //
+        $career = Career::find($id);
+        if ($career && Auth::user()->id === $career->user_id) {
+            $career->delete();
+            return [
+                'success' => 'career record deleted successfully!'
+            ];
+        } else {
+            return [
+                'error' => 'delete permission denied !'
+            ];
+        }
     }
 }
