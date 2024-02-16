@@ -1,29 +1,37 @@
 <template>
     <v-card>
+        <template #loader>
+            <v-progress-linear v-if="isProfileLoading" color="primary" :indeterminate="isProfileLoading"/>
+        </template>
         <v-card-title class="text-capitalize">
-            <v-avatar color="secondary" size="100" class="mr-5" image="https://i.pravatar.cc/50">
-                <span class="text-h5">AR</span>
+            <v-avatar color="secondary" size="100" class="mr-5" :image="userProfile.avatar">
+                <span class="text-h5 text-uppercase">{{ userProfile.abbreviatedName }}</span>
             </v-avatar>
-            <span>john doe</span>
+            <span>{{
+                    userProfile.firstName + ' ' + userProfile.lastName
+                }}</span>
         </v-card-title>
         <v-card-text class="text-capitalize">
             <v-list bg-color="transparent">
                 <v-list-item>
                     <div class="d-flex align-center">
                         <v-icon color="primary" class="mr-2">mdi-doctor</v-icon>
-                        <span>position</span>
+                        <span>{{ userProfile.profile.occupation }}</span>
                     </div>
                 </v-list-item>
                 <v-list-item>
                     <div class="d-flex align-center">
                         <v-icon color="primary" class="mr-2">mdi-hospital-building</v-icon>
-                        <span>university hospital of oran</span>
+                        <span>{{ userProfile.profile.hospital }}</span>
                     </div>
                 </v-list-item>
             </v-list>
         </v-card-text>
     </v-card>
     <v-card class="mt-1">
+        <template #loader>
+            <v-progress-linear v-if="isProfileLoading" color="primary" :indeterminate="isProfileLoading"/>
+        </template>
         <v-tabs
             grow
             align-tabs="center"
@@ -53,12 +61,8 @@
                         <v-list-item>
                             <v-card>
                                 <v-card-title class="text-capitalize text-primary">bio</v-card-title>
-                                <v-card-text class="text-dark">Aliquamsuscipit mel prodesset. Graecimea quem rutrum
-                                    finibus maiestatis
-                                    feugait ad nonumes natoque platea disputationi nihil. Persequerisfalli epicurei
-                                    euismod ocurreret sit sonet dolores comprehensam fabellas. Magnislibero gloriatur
-                                    petentium consetetur persecuti nec risus movet ei salutatus. Egetcurabitur iusto
-                                    facilis legimus suscipiantur mollis viris per legere duis no graeco vel nisi.
+                                <v-card-text class="text-dark">
+                                    {{ userProfile.profile.bio }}
                                 </v-card-text>
                             </v-card>
                         </v-list-item>
@@ -68,27 +72,27 @@
                                     <span class="d-flex align-center">
                                         <v-icon
                                             class="text-primary mr-1">mdi-map-marker</v-icon>
-                                        oran
+                                        {{ dz_cities[userProfile.profile.city] }}
                                     </span>
                                     <span class="d-flex align-center">
                                         <v-icon class="text-primary mr-1">mdi-domain</v-icon>
-                                        penumology
+                                        {{ userProfile.profile.department }}
                                     </span>
                                     <span class="d-flex align-center">
                                         <v-icon
                                             class="text-primary mr-1">mdi-calendar-account</v-icon>
-                                        nov 2023
+                                        {{ userProfile.joined }}
                                     </span>
                                 </v-card-actions>
                             </v-card>
                         </v-list-item>
-                        <v-list-item>
-                            <span class="mr-5"><b>15</b> following</span>
-                            <span><b>30</b> followers</span>
-                        </v-list-item>
+                        <!--                        <v-list-item>-->
+                        <!--                            <span class="mr-5"><b>15</b> following</span>-->
+                        <!--                            <span><b>30</b> followers</span>-->
+                        <!--                        </v-list-item>-->
                         <v-list-item>
                             <v-card>
-                                <v-card-title class="text-primary">Followers</v-card-title>
+                                <v-card-title class="text-primary">Followers Network</v-card-title>
                                 <v-row>
                                     <profile-card v-for="user in users" :user="user"/>
                                 </v-row>
@@ -98,8 +102,8 @@
                 </v-window-item>
 
                 <v-window-item value="experience">
-                    <ExperienceForm/>
-                    <ExperienceData/>
+                    <ExperienceForm :selected-career="selectedCareer"/>
+                    <ExperienceData @select-row="handleSelectedCareer"/>
                 </v-window-item>
 
                 <v-window-item value="contact">
@@ -119,7 +123,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, inject, ref} from "vue";
 import ProfileCard from "@/components/ProfileCard.vue";
 import ExperienceForm from "@/components/ExperienceForm.vue";
 import ExperienceData from "@/components/ExperienceData.vue";
@@ -129,31 +133,25 @@ import PersonalInfo from "@/components/Profile/PersonalInfo.vue";
 import CareerInfo from "@/components/Profile/CareerInfo.vue";
 import NotificationsSettings from "@/components/Profile/NotificationsSettings.vue";
 import AccountSettings from "@/components/Profile/AccountSettings.vue";
+import {useProfileStore} from "@/stores/profileStore.js";
+import {dz_cities} from "@/utils/constants.js";
 
+const ENV = inject('ENV')
 const tab = ref(null)
+const profileStore = useProfileStore()
+const isProfileLoading = ref(false)
+const userProfile = computed(() => {
+    return profileStore.getAuthUserProfile
+})
+const selectedCareer = ref(null)
+
+function handleSelectedCareer(career) {
+    selectedCareer.value = career
+}
 
 const users = [
     {
         username: 'ouahab98',
-        name: 'abdelouahab radja',
-        city: 'oran',
-        hospital: 'CHO',
-        department: 'pneumology',
-        occupation: 'assistant',
-        profileImgUrl: 'https://i.pravatar.cc/50',
-        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
-    }, {
-        username: 'ouahab74',
-        name: 'abdelouahab radja',
-        city: 'oran',
-        hospital: 'CHO',
-        department: 'pneumology',
-        occupation: 'assistant',
-        profileImgUrl: 'https://i.pravatar.cc/50',
-        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
-    }
-    , {
-        username: 'ouahab12',
         name: 'abdelouahab radja',
         city: 'oran',
         hospital: 'CHO',

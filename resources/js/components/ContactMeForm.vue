@@ -38,7 +38,7 @@
                                                 class="text-capitalize"
                                                 prepend-icon="mdi-calendar"
                                                 name="from_day"
-                                                label="Available Days"
+                                                label="From Day"
                                                 :items="weekDays"
                                                 clearable/>
                                         </v-col>
@@ -48,7 +48,7 @@
                                                 class="text-capitalize"
                                                 prepend-icon="mdi-calendar"
                                                 name="to_day"
-                                                label="Available Days"
+                                                label="To Day"
                                                 :items="weekDays"
                                                 clearable/>
                                         </v-col>

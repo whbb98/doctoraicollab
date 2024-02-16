@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <router-view/>
-        <v-footer order="0" app color="dark">
+        <v-footer  order="0" app color="dark">
             <h1>footer</h1>
         </v-footer>
         <popup-snackbar :data="popupData"/>

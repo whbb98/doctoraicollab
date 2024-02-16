@@ -22,7 +22,6 @@ export const usePostsStore = defineStore('postsStore', {
                     }
                 })
                 const data = response.data
-                console.log(data)
                 if (data.error) {
                     notificationsStore.setPopupNotification({
                         open: true,

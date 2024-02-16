@@ -21,7 +21,7 @@ class Profile extends Model
         'city' => '31',
         'hospital' => 'your hospital',
         'occupation' => 'your occupation',
-        'department' => 'your occupation'
+        'department' => 'your department'
     ];
 
     protected $fillable = [
