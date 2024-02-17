@@ -74,18 +74,22 @@ class Profile extends Model
         if ($this->photo == null) {
             return null;
         } else {
-            $base64Photo = base64_encode($this->photo);
-            return 'data:image/jpeg;base64,' . $base64Photo;
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_buffer($finfo, $this->photo);
+            finfo_close($finfo);
+            return "data:$mimeType;base64," . base64_encode($this->photo);
         }
     }
 
     public function getCover()
     {
         if ($this->cover == null) {
-            return "https://source.unsplash.com/950x200/?nature";
+            return null;
         } else {
-            $base64Photo = base64_encode($this->cover);
-            return 'data:image/jpeg;base64,' . $base64Photo;
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_buffer($finfo, $this->cover);
+            finfo_close($finfo);
+            return "data:$mimeType;base64," . base64_encode($this->cover);
         }
     }
 

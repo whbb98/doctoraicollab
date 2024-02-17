@@ -31,6 +31,7 @@ class UpdateUserRequest extends FormRequest
                 'last_name' => ['sometimes', 'required', 'alpha:ascii'],
                 'email' => ['sometimes', 'required', 'email', 'unique:user'],
                 'password' => ['sometimes', 'required', 'min:5', 'max:20'],
+                'old_password' => ['required_if:password,!=,null', 'min:5', 'max:20'],
                 'phone' => ['sometimes', 'required', 'unique:user', 'digits:10'],
                 'birth_date' => ['sometimes', 'required', 'date_format:Y-m-d'],
                 'gender' => ['sometimes', 'required', Rule::in('M', 'F')],

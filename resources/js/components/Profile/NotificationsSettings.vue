@@ -12,7 +12,6 @@
                                         :key="item.name"
                                         class="text-capitalize text-high-emphasis"
                                         :disabled="!editMode"
-                                        name=""
                                         color="primary"
                                         :label="item.description"
                             style="color:red"

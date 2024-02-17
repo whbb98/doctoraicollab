@@ -62,7 +62,7 @@ class ProfileController extends Controller
         }
         $profile->update($request->except('photo', 'cover'));
         return [
-            'success' => 'inserted successfully!: '
+            'success' => 'profile data updated successfully !'
         ];
     }
 

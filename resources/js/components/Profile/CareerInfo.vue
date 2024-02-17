@@ -1,24 +1,59 @@
 <template>
     <v-container>
         <v-card>
+            <template #loader>
+                <v-progress-linear
+                    v-if="isCareerLoading"
+                    :indeterminate="isCareerLoading"
+                />
+            </template>
             <v-card-title class="text-primary text-capitalize">career information</v-card-title>
             <v-card-text>
-                <v-form @submit.prevent>
+                <v-form @submit.prevent="handleCareerUpdate">
                     <v-row>
                         <v-col cols="12">
-                            <v-text-field prepend-icon="mdi-wallet-travel" class="text-capitalize" color="primary" name="occupation" label="occupation" :disabled="!editMode"/>
+                            <v-text-field prepend-icon="mdi-wallet-travel"
+                                          class="text-capitalize"
+                                          color="primary"
+                                          label="occupation"
+                                          :disabled="!editMode"
+                                          v-model="profile.occupation"
+                            />
                         </v-col>
                         <v-col cols="12">
-                            <v-text-field prepend-icon="mdi-office-building" class="text-capitalize" color="primary" name="department" label="department" :disabled="!editMode"/>
+                            <v-text-field prepend-icon="mdi-office-building"
+                                          class="text-capitalize"
+                                          color="primary"
+                                          label="department"
+                                          :disabled="!editMode"
+                                          v-model="profile.department"
+                            />
                         </v-col>
                         <v-col cols="12">
-                            <v-text-field prepend-icon="mdi-hospital-building" class="text-capitalize" color="primary" name="hospital" label="hospital" :disabled="!editMode"/>
+                            <v-text-field prepend-icon="mdi-hospital-building"
+                                          class="text-capitalize"
+                                          color="primary"
+                                          label="hospital"
+                                          :disabled="!editMode"
+                                          v-model="profile.hospital"
+                            />
                         </v-col>
                         <v-col cols="12">
-                            <v-text-field prepend-icon="mdi-map-marker" class="text-capitalize" color="primary" name="city" label="city" :disabled="!editMode"/>
+                            <v-select prepend-icon="mdi-map-marker"
+                                      class="text-capitalize"
+                                      color="primary"
+                                      label="city"
+                                      :disabled="!editMode"
+                                      v-model="profile.city"
+                                      :items="dz_cities"
+                                      item-title="text"
+                                      item-value="value"
+                            />
                         </v-col>
                     </v-row>
-                    <v-btn type="submit" class="mr-1" color="primary">
+                    <v-btn type="submit"
+                           class="mr-1"
+                           color="primary">
                         <v-icon>mdi-content-save</v-icon>
                         save
                     </v-btn>
@@ -33,9 +68,26 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {inject, reactive, ref} from "vue";
+import {useProfileStore} from "@/stores/profileStore.js";
+import {dz_cities} from "@/utils/constants.js";
 
+const profileStore = useProfileStore()
 const editMode = ref(false)
+const profile = reactive({
+    occupation: profileStore.getAuthUserProfile.profile.occupation,
+    department: profileStore.getAuthUserProfile.profile.department,
+    hospital: profileStore.getAuthUserProfile.profile.hospital,
+    city: profileStore.getAuthUserProfile.profile.city
+})
+const isCareerLoading = ref(false)
+const ENV = inject('ENV')
+
+async function handleCareerUpdate() {
+    isCareerLoading.value = true
+    const status = await profileStore.updateProfileData(ENV.APP_API_URL, profile)
+    isCareerLoading.value = false
+}
 </script>
 
 <style scoped>
