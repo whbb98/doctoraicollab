@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 import axios from "axios";
 import {useNotificationsStore} from "@/stores/notificationsStore.js";
+import {useProfileStore} from "@/stores/profileStore.js";
 
 export const useAuthStore = defineStore('authStore', {
     state: () => ({
@@ -131,6 +132,12 @@ export const useAuthStore = defineStore('authStore', {
                     title: 'signup failed !',
                     message: error.message
                 })
+            }
+        },
+        refreshUser() {
+            const profileData = useProfileStore().getAuthUserProfile
+            for (let userKey in this.user) {
+                this.user[userKey] = profileData[userKey]
             }
         }
     }

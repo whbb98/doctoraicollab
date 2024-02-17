@@ -60,7 +60,6 @@
                             <v-text-field class="text-capitalize"
                                           color="primary"
                                           prepend-icon="mdi-phone"
-                                          name="phone"
                                           label="new phone number"
                                           :rules="validateDigits"
                             />
@@ -69,7 +68,6 @@
                             <v-text-field class="text-capitalize"
                                           color="primary"
                                           prepend-icon="mdi-lock"
-                                          name="password"
                                           label="password"
                                           type="password"
                             />
@@ -91,7 +89,6 @@
                             <v-text-field class="text-capitalize"
                                           color="primary"
                                           prepend-icon="mdi-lock"
-                                          name="current_password"
                                           label="current password"
                                           type="password"
                             />
@@ -100,7 +97,6 @@
                             <v-text-field class="text-capitalize"
                                           color="primary"
                                           prepend-icon="mdi-lock"
-                                          name="new_password"
                                           label="new password"
                                           type="password"
                                           v-model="newPassword"
@@ -110,7 +106,6 @@
                             <v-text-field class="text-capitalize"
                                           color="primary"
                                           prepend-icon="mdi-lock"
-                                          name="confirm_password"
                                           label="confirm new password"
                                           type="password"
                                           v-model="confirmPassword"

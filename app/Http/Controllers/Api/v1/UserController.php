@@ -49,7 +49,7 @@ class UserController extends Controller
         } catch (e) {
             DB::rollBack();
             return [
-                'error'=>'Error while creating a new user!'
+                'error' => 'Error while creating a new user!'
             ];
         }
     }
@@ -86,7 +86,6 @@ class UserController extends Controller
                 'error' => 'method is not supported!'
             ];
         }
-
     }
 
     /**

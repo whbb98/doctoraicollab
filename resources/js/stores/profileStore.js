@@ -25,6 +25,7 @@ export const useProfileStore = defineStore('profileStore', {
                     })
                 const data = response.data
                 this.authUserProfile = data.data
+                return true
             } catch (e) {
                 const error = e.response.data
                 notificationsStore.setPopupNotification({
@@ -195,6 +196,93 @@ export const useProfileStore = defineStore('profileStore', {
                     message: error.message,
                     type: 'error'
                 })
+            }
+        },
+        async updateUserData(APP_API_URL, userData) {
+            const notificationsStore = useNotificationsStore()
+            const authStore = useAuthStore()
+            const id = authStore.getUser.id
+            try {
+                const response = axios.patch(`${APP_API_URL}/users/${id}`, {
+                    ...userData
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${authStore.getAuthToken}`
+                    }
+                })
+                const data = (await response).data
+                if (data.success) {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: 'User data update',
+                        message: data.success,
+                        type: 'success'
+                    })
+                    this.refreshProfile(APP_API_URL)
+                    return true
+                } else {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: 'User Data Update',
+                        message: 'Failed to update user data',
+                        type: 'error'
+                    })
+                    return false
+                }
+            } catch (e) {
+                const error = e.response.data
+                notificationsStore.setPopupNotification({
+                    open: true,
+                    title: 'User Data Update',
+                    message: error.message,
+                    type: 'error'
+                })
+                return false
+            }
+        },
+        async refreshProfile(APP_API_URL) {
+            const status = await this.fetchAuthUserProfile(APP_API_URL)
+            useAuthStore().refreshUser()
+        },
+        async updateProfileData(APP_API_URL, profile) {
+            const notificationsStore = useNotificationsStore()
+            try {
+                const response = await axios.post(`${APP_API_URL}/profiles`, {
+                    ...profile
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${useAuthStore().getAuthToken}`,
+                        "Content-Type": "multipart/form-data"
+                    }
+                })
+                const data = response.data
+                if (data.success) {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: 'Profile update!',
+                        message: data.success,
+                        type: 'success'
+                    })
+                    this.refreshProfile(APP_API_URL)
+                    return true
+                } else {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: 'Profile update!',
+                        message: 'failed updating profile data!',
+                        type: 'error'
+                    })
+                    return false
+                }
+            } catch (e) {
+                const error = e.response.data
+                notificationsStore.setPopupNotification({
+                    open: true,
+                    title: 'Profile update!',
+                    message: error.message,
+                    type: 'error'
+                })
+                return false
             }
         }
     }

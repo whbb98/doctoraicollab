@@ -72,7 +72,7 @@
                                     <span class="d-flex align-center">
                                         <v-icon
                                             class="text-primary mr-1">mdi-map-marker</v-icon>
-                                        {{ dz_cities[userProfile.profile.city] }}
+                                        {{ city }}
                                     </span>
                                     <span class="d-flex align-center">
                                         <v-icon class="text-primary mr-1">mdi-domain</v-icon>
@@ -148,7 +148,9 @@ const selectedCareer = ref(null)
 function handleSelectedCareer(career) {
     selectedCareer.value = career
 }
-
+const city = computed(()=>{
+    return dz_cities.find(item => item.value == profileStore.getAuthUserProfile.profile.city).text
+})
 const users = [
     {
         username: 'ouahab98',
