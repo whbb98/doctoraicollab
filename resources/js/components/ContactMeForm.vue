@@ -10,10 +10,16 @@
                 activator="parent">
                 <v-container>
                     <v-card class="overflow-y-auto">
+                        <template #loader>
+                            <v-progress-linear
+                                v-if="isContactUpdateLoading"
+                                :indeterminate="isContactUpdateLoading"
+                            />
+                        </template>
                         <v-card-title class="text-capitalize text-primary">update contact form</v-card-title>
                         <v-card-text>
                             <v-container>
-                                <v-form @submit.prevent validate-on="input">
+                                <v-form @submit.prevent="handleContactUpdate">
                                     <v-row>
                                         <v-col cols="12" sm="6">
                                             <v-text-field
@@ -26,7 +32,6 @@
                                         <v-col cols="12" sm="6">
                                             <v-text-field
                                                 v-model="contactForm.email"
-                                                :rules="validateEmail"
                                                 prepend-icon="mdi-email"
                                                 name="email"
                                                 label="work email"
@@ -75,8 +80,14 @@
                                                 clearable/>
                                         </v-col>
                                     </v-row>
-                                    <v-btn type="submit" color="primary" class="mr-2">Save</v-btn>
-                                    <v-btn color="warning" variant="outlined" @click="dialogContactForm = false">Cancel
+                                    <v-btn type="submit" color="primary" class="mr-2">
+                                        Save
+                                    </v-btn>
+                                    <v-btn color="warning"
+                                           variant="outlined"
+                                           @click="dialogContactForm = false"
+                                    >
+                                        Cancel
                                     </v-btn>
                                 </v-form>
                             </v-container>
@@ -89,19 +100,31 @@
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import {inject, reactive, ref, watch} from "vue";
 import {weekDays} from "@/utils/constants.js";
-import {validateEmail} from "@/utils/validateRules.js";
+import {useProfileStore} from "@/stores/profileStore.js";
 
+const profileStore = useProfileStore()
 const dialogContactForm = ref(false)
-const contactForm = reactive({
-    email: null,
-    phone: null,
-    from_day: null,
-    to_day: null,
-    from_time: null,
-    to_time: null
+const isContactUpdateLoading = ref(false)
+const ENV = inject('ENV')
+const contactForm = ref({
+    ...profileStore.getAuthUserProfile.contact
 })
+
+watch(dialogContactForm, (newValue) => {
+    contactForm.value = {
+        ...profileStore.getAuthUserProfile.contact
+    }
+})
+
+async function handleContactUpdate() {
+    isContactUpdateLoading.value = true
+    const status = profileStore.updateContactInfo(ENV.APP_API_URL, contactForm.value)
+    dialogContactForm.value = !status
+    isContactUpdateLoading.value = false
+}
+
 
 </script>
 

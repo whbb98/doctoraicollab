@@ -156,6 +156,46 @@ export const useProfileStore = defineStore('profileStore', {
                     type: 'error'
                 })
             }
+        },
+        async updateContactInfo(APP_API_URL, contact) {
+            const profileStore = useProfileStore()
+            const notificationsStore = useNotificationsStore()
+            try {
+                const response = await axios.post(`${APP_API_URL}/contacts`,
+                    contact,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${useAuthStore().getAuthToken}`
+                        }
+                    })
+                const data = response.data
+                if (data.success) {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: 'contact update',
+                        message: 'contacts record updated successfully!',
+                        type: 'success'
+                    })
+                    profileStore.authUserProfile.contact = contact
+                    return true
+                } else {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: 'contact update',
+                        message: data.message,
+                        type: 'error'
+                    })
+                    return false
+                }
+            } catch (e) {
+                const error = e.response.data
+                notificationsStore.setPopupNotification({
+                    open: true,
+                    title: 'contact update',
+                    message: error.message,
+                    type: 'error'
+                })
+            }
         }
     }
 })
