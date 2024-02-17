@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\v1\UserResource;
 use App\Http\Resources\v1\UserCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -31,17 +32,26 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
-        $user = User::create($request->all());
-        $profile = new Profile();
-        $profile->user_id = $user->id;
-        $profile->save();
-        $contact = new Contact();
-        $contact->user_id = $user->id;
-        $contact->save();
-        $notificationSettings = new NotificationSettings();
-        $notificationSettings->user_id = $user->id;
-        $notificationSettings->save();
-        return new UserResource($user);
+        try {
+            DB::beginTransaction();
+            $user = User::create($request->all());
+            $profile = new Profile();
+            $profile->user_id = $user->id;
+            $profile->save();
+            $contact = new Contact();
+            $contact->user_id = $user->id;
+            $contact->save();
+            $notificationSettings = new NotificationSettings();
+            $notificationSettings->user_id = $user->id;
+            $notificationSettings->save();
+            DB::commit();
+            return new UserResource($user);
+        } catch (e) {
+            DB::rollBack();
+            return [
+                'error'=>'Error while creating a new user!'
+            ];
+        }
     }
 
     /**

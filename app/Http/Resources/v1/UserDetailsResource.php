@@ -34,7 +34,7 @@ class UserDetailsResource extends JsonResource
             'avatar' => $this->profile->getPhoto(),
             'cover' => $this->profile->getCover(),
             'career' => $this->career?->makeHidden(['user_id']),
-            'contact' => $this->contact->makeHidden(['user_id']),
+            'contact' => new ContactResource($this->contact),
             'notificationSettings' => $this->notificationSettings->makeHidden('user_id'),
             'friends' => $this->friends
         ];

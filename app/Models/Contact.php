@@ -19,10 +19,10 @@ class Contact extends Model
     protected $attributes = [
         'phone' => '0123456789',
         'email' => 'your working email',
-        'from_day' => '1',
-        'to_day' => '5',
-        'from_time' => '00:00',
-        'to_time' => '00:00'
+        'from_day' => 'Saturday',
+        'to_day' => 'Thursday',
+        'from_time' => '08:00',
+        'to_time' => '16:00'
     ];
 
     protected $fillable = [

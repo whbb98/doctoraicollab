@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ContactUpdateRequest;
+use App\Http\Resources\v1\ContactResource;
 use App\Models\Contact;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,8 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return Auth::user()->contact;
+        $contact = Auth::user()->contact;
+        return new ContactResource($contact);
     }
 
     /**

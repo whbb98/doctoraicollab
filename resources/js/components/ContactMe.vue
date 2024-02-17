@@ -5,22 +5,22 @@
             <v-card-text>
                 <v-list>
                     <v-list-item prepend-icon="mdi-phone">
-                        0123456789
+                        {{ contactData.phone }}
                     </v-list-item>
                     <v-list-item prepend-icon="mdi-email">
-                        john-doe@gmail.com
+                        {{ contactData.email }}
                     </v-list-item>
                     <v-list-item prepend-icon="mdi-calendar">
                         <v-list-item class="text-capitalize">
                             <v-chip-group>
-                                <v-chip>monday</v-chip>
-                                <v-chip>friday</v-chip>
+                                <v-chip>{{ contactData.from_day }}</v-chip>
+                                <v-chip>{{ contactData.to_day }}</v-chip>
                             </v-chip-group>
                         </v-list-item>
                         <v-list-item>
                             <v-chip-group>
-                                <v-chip>08:00</v-chip>
-                                <v-chip>16:00</v-chip>
+                                <v-chip>{{ contactData.from_time }}</v-chip>
+                                <v-chip>{{ contactData.to_time }}</v-chip>
                             </v-chip-group>
                         </v-list-item>
                     </v-list-item>
@@ -31,7 +31,13 @@
 </template>
 
 <script setup>
+import {useProfileStore} from "@/stores/profileStore.js";
+import {computed} from "vue";
 
+const profileStore = useProfileStore()
+const contactData = computed(() => {
+    return profileStore.getAuthUserProfile.contact
+})
 </script>
 
 <style scoped>
