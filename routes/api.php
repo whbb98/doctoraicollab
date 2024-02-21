@@ -34,6 +34,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], f
         Route::resource('notificationSettings', 'NotificationSettingsController');
         Route::resource('contacts', 'ContactController');
         Route::resource('notifications', 'NotificationsController');
+        Route::match('POST', 'profiles/deletePhotoCover', 'ProfileController@deletePhotoCover');
         // posts
         Route::resource('posts', 'PostController');
         Route::match('POST', 'posts/{postID}/updatePost', 'PostController@updatePost');

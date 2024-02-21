@@ -76,7 +76,13 @@ async function handleUpload() {
 }
 
 async function handleDelete() {
-    console.log('delete profile images will be implemented soon!')
+    if (props.photo) {
+        await profileStore.deleteProfileImage(ENV.APP_API_URL, 'photo')
+        imgUrl.value = null
+    } else if (props.cover) {
+        await profileStore.deleteProfileImage(ENV.APP_API_URL, 'cover')
+        imgUrl.value = null
+    }
 }
 </script>
 

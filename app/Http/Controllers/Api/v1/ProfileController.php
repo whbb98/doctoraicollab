@@ -110,4 +110,24 @@ class ProfileController extends Controller
             'error' => 'method is not supported!'
         ];
     }
+
+    public function deletePhotoCover(Request $request)
+    {
+        $user = Auth::user();
+        $profile = $user->profile;
+        if ($request->get('request') === 'photo') {
+            $profile->photo = null;
+            $profile->save();
+            return [
+                'success' => 'profile personal photo deleted successfully!'
+            ];
+        }
+        if ($request->get('request') === 'cover') {
+            $profile->cover = null;
+            $profile->save();
+            return [
+                'success' => 'profile cover picture deleted successfully!'
+            ];
+        }
+    }
 }
