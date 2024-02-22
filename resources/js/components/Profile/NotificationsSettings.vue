@@ -8,17 +8,21 @@
                 <v-form>
                     <v-row>
                         <v-col cols="12">
-                            <v-checkbox v-for="item in notificationsList"
-                                        :key="item.name"
-                                        class="text-capitalize text-high-emphasis"
-                                        :disabled="!editMode"
+                            <v-checkbox v-for="(item,key) in notificationSettings"
+                                        v-model="notificationSettings[key]"
+                                        :key="key"
+                                        :label="notificationsList.find(item=>item.name===key).description"
+                                        :readonly="!editMode"
                                         color="primary"
-                                        :label="item.description"
-                            style="color:red"
+                                        class="text-capitalize text-high-emphasis"
                             />
                         </v-col>
                     </v-row>
-                    <v-btn class="mr-1" color="primary">
+                    <v-btn v-if="editMode"
+                           class="mr-1"
+                           color="primary"
+                           @click="updateNotificationSettings"
+                    >
                         <v-icon>mdi-content-save</v-icon>
                         save
                     </v-btn>
@@ -33,11 +37,24 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {inject, onMounted, reactive, ref, watch} from "vue";
 import {notificationsList} from "@/utils/constants.js";
+import {useProfileStore} from "@/stores/profileStore.js";
 
+const profileStore = useProfileStore()
 const editMode = ref(false)
+const isLoading = ref(false)
+const ENV = inject('ENV')
+const notificationSettings = reactive(profileStore.getAuthUserProfile.notificationSettings)
 
+async function updateNotificationSettings() {
+    isLoading.value = true
+    const status = await profileStore.updateProfileNotificationSettings(ENV.APP_API_URL, notificationSettings)
+    if (!status) {
+        Object.assign(notificationSettings, {...profileStore.getAuthUserProfile.notificationSettings})
+    }
+    isLoading.value = false
+}
 </script>
 
 <style scoped>
