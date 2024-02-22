@@ -325,7 +325,10 @@
                     <v-col cols="12">
                         <v-row class="comments">
                             <v-col cols="12">
-                                <user-comment-card v-for="item in userComments" :userComment="item"/>
+                                <user-comment-card
+                                    v-for="item in userComments"
+                                    :comment="item"
+                                />
                             </v-col>
                         </v-row>
                     </v-col>
@@ -427,27 +430,30 @@ function saveVote() {
 const userComments = ref([
     {
         id: 1,
-        nameAbbr: 'AR',
+        username:'ouahab98',
+        abbreviatedName: 'AR',
         fullName: 'abdelouahab radja',
         avatar: 'https://i.pravatar.cc/50',
-        commentDate: new Date().toDateString() + '14:52',
-        commentText: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
+        datetime: new Date().toDateString() + '14:52',
+        comment: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
     },
     {
         id: 2,
-        nameAbbr: 'AS',
+        username:'amine31',
+        abbreviatedName: 'AS',
         fullName: 'amine smahi',
         avatar: 'https://i.pravatar.cc/50',
-        commentDate: new Date().toDateString() + '14:52',
-        commentText: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
+        datetime: new Date().toDateString() + '14:52',
+        comment: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
     },
     {
         id: 3,
-        nameAbbr: 'ob',
+        username:'osmbonnor',
+        abbreviatedName: 'ob',
         fullName: 'oussama bonnor',
         // avatar: 'https://i.pravatar.cc/50',
-        commentDate: new Date().toDateString() + '14:52',
-        commentText: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
+        datetime: new Date().toDateString() + '14:52',
+        comment: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
     }
 ])
 const comment = ref(null)

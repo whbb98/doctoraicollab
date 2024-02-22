@@ -9,13 +9,13 @@
         <v-card-subtitle>{{ comment.datetime }}</v-card-subtitle>
         <v-card-text>
             {{ comment.comment }}
-            <v-btn v-if="comment.user === authStore.getUser.username"
+            <v-btn v-if="comment.username === authStore.getUser.username"
                    class="mr-1"
                    icon="mdi-pencil-outline"
                    color="primary"
                    size="30"
                    @click="updateComment(comment.id,comment.comment)"/>
-            <v-btn v-if="comment.user === authStore.getUser.username"
+            <v-btn v-if="comment.username === authStore.getUser.username"
                    icon="mdi-delete"
                    color="error"
                    size="30"
