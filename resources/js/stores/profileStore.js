@@ -325,6 +325,47 @@ export const useProfileStore = defineStore('profileStore', {
                 })
                 return false
             }
+        },
+        async updateProfileNotificationSettings(APP_API_URL, notificationSettings) {
+            const notificationsStore = useNotificationsStore()
+            try {
+                const response = await axios.patch(
+                    `${APP_API_URL}/notificationSettings/${notificationSettings.id}`, {
+                        ...notificationSettings
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${useAuthStore().getAuthToken}`
+                        }
+                    })
+                const data = response.data
+                if (data.success) {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: `account notification settings!`,
+                        message: data.success,
+                        type: 'success'
+                    })
+                    this.refreshProfile(APP_API_URL)
+                    return true
+                } else {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: `account notification settings!`,
+                        message: 'error while updating notification settings',
+                        type: 'error'
+                    })
+                    return false
+                }
+            } catch (e) {
+                const error = e.response.data
+                notificationsStore.setPopupNotification({
+                    open: true,
+                    title: `account notification settings!`,
+                    message: error.message,
+                    type: 'error'
+                })
+                return false
+            }
         }
     }
 })

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\UpdateNotificationSettingsRequest;
+use App\Http\Resources\v1\NotificationSettingsResource;
 use App\Models\NotificationSettings;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class NotificationSettingsController extends Controller
      */
     public function index()
     {
-        return Auth::user()->notificationSettings;
+        $notificationSettings = Auth::user()->notificationSettings->makeHidden(['id', 'user_id']);
+        return new NotificationSettingsResource($notificationSettings);
     }
 
     /**

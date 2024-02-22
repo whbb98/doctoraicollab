@@ -62,6 +62,7 @@ function renderImage(ev) {
 }
 
 async function handleUpload() {
+    if (!imgFile.value) return
     isLoading.value = true
     const uploadData = {}
     if (imgFile) {
