@@ -51,7 +51,8 @@
                             />
                         </v-col>
                     </v-row>
-                    <v-btn type="submit"
+                    <v-btn v-if="editMode"
+                           type="submit"
                            class="mr-1"
                            color="primary">
                         <v-icon>mdi-content-save</v-icon>
