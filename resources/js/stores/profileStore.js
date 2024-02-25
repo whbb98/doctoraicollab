@@ -366,6 +366,43 @@ export const useProfileStore = defineStore('profileStore', {
                 })
                 return false
             }
+        },
+        async fetchUserProfile(APP_API_URL, query) {
+            const notificationsStore = useNotificationsStore()
+            try {
+                const response = await axios.get(`${APP_API_URL}/profiles`, {
+                    params: {
+                        user: query.user ?? undefined,
+                        city: query.city ?? undefined,
+                        hospital: query.hospital ?? undefined,
+                        department: query.department ?? undefined,
+                        occupation: query.occupation ?? undefined
+                    },
+                    headers: {
+                        Authorization: `Bearer ${useAuthStore().getAuthToken}`
+                    }
+                })
+                const data = response.data
+                if (!data.error) {
+                    return data.data
+                } else {
+                    notificationsStore.setPopupNotification({
+                        open: true,
+                        title: `fetching user profile data!`,
+                        message: error.message,
+                        type: 'error'
+                    })
+                    return []
+                }
+            } catch (e) {
+                const error = e.response.data
+                notificationsStore.setPopupNotification({
+                    open: true,
+                    title: `fetching user profile data!`,
+                    message: error.message,
+                    type: 'error'
+                })
+            }
         }
     }
 })
