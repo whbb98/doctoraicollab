@@ -1,7 +1,11 @@
 import {defineStore} from "pinia";
+import {useProfileStore} from "@/stores/profileStore.js";
 
-const useMainStore = defineStore('mainStore', {
+export const useMainStore = defineStore('mainStore', {
     state: () => ({}),
     getters: {},
-    actions: {}
+    actions: {
+        async initStores(APP_API_URL) {
+        }
+    }
 })

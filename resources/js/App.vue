@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <router-view/>
-        <v-footer  order="0" app color="dark">
+        <v-footer order="0" app color="dark">
             <h1>footer</h1>
         </v-footer>
         <popup-snackbar :data="popupData"/>
@@ -9,10 +9,12 @@
 </template>
 
 <script setup>
-import {computed, provide, reactive, ref, watch, watchEffect} from "vue";
+import {computed, onMounted, provide, reactive, ref, watch, watchEffect} from "vue";
 import PopupSnackbar from "@/components/PopupSnackbar.vue";
 import {useNotificationsStore} from "@/stores/notificationsStore.js";
+import {useMainStore} from "@/stores/mainStore.js";
 
+const mainStore = useMainStore()
 const ENV = {
     APP_URL: import.meta.env.VITE_APP_URL,
     APP_API_URL: import.meta.env.VITE_APP_API_URL,
@@ -38,6 +40,9 @@ watch(notificationsStore.getPopupNotification, (newVal) => {
 function getCsrfToken() {
     return document.head.querySelector('meta[name="csrf-token"]').content;
 }
+
+onMounted(async () => {
+})
 </script>
 
 

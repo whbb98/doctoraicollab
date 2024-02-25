@@ -24,6 +24,7 @@ use App\Models\UserAnnotations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use function Laravel\Prompts\alert;
 
 class BlogController extends Controller
@@ -46,56 +47,60 @@ class BlogController extends Controller
      */
     public function store(CreateBlogRequest $request)
     {
-        $blog = Blog::create($request->except('cover_image'));
-        $blogCoverImg = $request->file('cover_image');
-        if ($blogCoverImg) {
-            $blog->cover_image = file_get_contents($blogCoverImg->getPathname());
-            $blog->save();
-        }
-        //meeting data
-        if ($request->has_meeting) {
-            $meetingInfo = [];
-            $meetingInfo['scheduled'] = $request->scheduled;
-            $meetingInfo['link'] = $request->link;
-            $meetingInfo['duration'] = $request->duration;
-            $meeting = $blog->meeting()->create($meetingInfo);
-        }
-        //blog images
-        $files = $request->file('files');
-        if ($files) {
-            foreach ($files as $file) {
-                $fileData = [];
-                $fileData['image_name'] = $file->getClientOriginalName();
-                $fileData['type'] = $file->getMimeType();
-                $fileData['image_binary'] = file_get_contents($file->getPathname());
-                $fileData['hash_key'] = hash('sha256', $fileData['image_binary']);
-                $blogImage = $blog->blogImages()->create($fileData);
+        try {
+            DB::beginTransaction();
+            $blog = Blog::create($request->except('files'));
+            //meeting data
+            if ($request->has_meeting) {
+                $meetingInfo = [];
+                $meetingInfo['scheduled'] = $request->scheduled;
+                $meetingInfo['link'] = $request->link;
+                $meetingInfo['duration'] = $request->duration;
+                $meeting = $blog->meeting()->create($meetingInfo);
             }
-        }
-        //participants
-        $participants = $request->participants;
-        if ($participants) {
-            foreach ($participants as $username) {
-                $user = User::where('username', $username)->first();
-                //Skipping the owner as a participant!
-                if (Auth::user()->id == $user->id) {
-                    continue;
+            //blog images
+            $files = $request->file('files');
+            if ($files) {
+                foreach ($files as $file) {
+                    $fileData = [];
+                    $fileData['image_name'] = $file->getClientOriginalName();
+                    $fileData['type'] = $file->getMimeType();
+                    $fileData['image_binary'] = file_get_contents($file->getPathname());
+                    $fileData['hash_key'] = hash('sha256', $fileData['image_binary']);
+                    $blogImage = $blog->blogImages()->create($fileData);
                 }
-                BlogParticipate::create([
-                    'blog_id' => $blog->id,
-                    'user_id' => $user->id
-                ]);
             }
+            //participants
+            $participants = $request->participants;
+            if ($participants) {
+                foreach ($participants as $username) {
+                    $user = User::where('username', $username)->first();
+                    //Skipping the owner as a participant!
+                    if (Auth::user()->id == $user->id) {
+                        continue;
+                    }
+                    BlogParticipate::create([
+                        'blog_id' => $blog->id,
+                        'user_id' => $user->id
+                    ]);
+                }
+            }
+            //Adding the owner as a participant!
+            BlogParticipate::create([
+                'blog_id' => $blog->id,
+                'user_id' => Auth::user()->id,
+                'status' => 1
+            ]);
+            DB::commit();
+            return [
+                'success' => 'blog created successfully!'
+            ];
+        } catch (e) {
+            DB::rollBack();
+            return [
+                'error' => 'error while creating blog!'
+            ];
         }
-        //Adding the owner as a participant!
-        BlogParticipate::create([
-            'blog_id' => $blog->id,
-            'user_id' => Auth::user()->id,
-            'status' => 1
-        ]);
-        return [
-            'success' => 'blog inserted successfully!'
-        ];
     }
 
     public function updateBlog($blogID, UpdateBlogRequest $request)
