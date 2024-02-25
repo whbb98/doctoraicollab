@@ -27,7 +27,6 @@ class CreateBlogRequest extends FormRequest
         return [
             'title' => ['required', 'max:255'],
             'description' => ['required'],
-            'cover_image' => ['sometimes', 'required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:1024'],
             'files' => ['required', 'array', 'min:3'],
             'files.*' => ['required', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
             'has_meeting' => ['sometimes', 'required', 'boolean'],

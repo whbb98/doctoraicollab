@@ -17,7 +17,9 @@ class Blog extends Model
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = false;
-
+    protected $attributes = [
+        'has_meeting' => false,
+    ];
     protected $fillable = [
         'title',
         'description',
