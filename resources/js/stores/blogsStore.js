@@ -11,8 +11,8 @@ export const useBlogsStore = defineStore('blogsStore', {
         getBlogs() {
             return this.blogs
         },
-        getMeetings(){
-
+        getMeetingBlogs() {
+            return this.getBlogs.filter(blog => blog.has_meeting)
         }
     },
     actions: {
