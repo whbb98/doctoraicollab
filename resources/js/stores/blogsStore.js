@@ -7,7 +7,14 @@ export const useBlogsStore = defineStore('blogsStore', {
     state: () => ({
         blogs: []
     }),
-    getters: {},
+    getters: {
+        getBlogs() {
+            return this.blogs
+        },
+        getMeetingBlogs() {
+            return this.getBlogs.filter(blog => blog.has_meeting)
+        }
+    },
     actions: {
         async createNewBlog(APP_API_URL, blog) {
             const notificationsStore = useNotificationsStore()
@@ -16,7 +23,7 @@ export const useBlogsStore = defineStore('blogsStore', {
                 blog?.title?.length > 0 && formData.append('title', blog.title)
                 blog?.description?.length > 0 && formData.append('description', blog.description)
                 if (blog?.participants?.length > 0) {
-                    blog.participants.forEach((p,i) => formData.append(`participants[${i}]`, p))
+                    blog.participants.forEach((p, i) => formData.append(`participants[${i}]`, p))
                 }
                 if (blog.hasMeeting) {
                     formData.append('has_meeting', 1)
@@ -55,7 +62,6 @@ export const useBlogsStore = defineStore('blogsStore', {
                 }
             } catch (e) {
                 const error = e.response.data
-                console.log(error)
                 notificationsStore.setPopupNotification({
                     open: true,
                     type: 'error',
@@ -65,7 +71,25 @@ export const useBlogsStore = defineStore('blogsStore', {
                 return false
             }
         },
-        async fetchBlogs() {
+        async fetchBlogs(APP_API_URL) {
+            const notificationsStore = useNotificationsStore()
+            try {
+                const response = await axios.get(`${APP_API_URL}/blogs`, {
+                    headers: {
+                        Authorization: `Bearer ${useAuthStore().getAuthToken}`
+                    }
+                })
+                const data = response.data
+                this.blogs = data.data
+            } catch (e) {
+                const error = e.response.data
+                notificationsStore.setPopupNotification({
+                    open: true,
+                    type: 'error',
+                    title: 'fetching blogs records!',
+                    message: error.message
+                })
+            }
         },
         async fetchBlogData() {
         }

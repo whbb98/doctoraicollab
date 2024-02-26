@@ -86,15 +86,15 @@
                                 </v-card-actions>
                             </v-card>
                         </v-list-item>
-                        <!--                        <v-list-item>-->
-                        <!--                            <span class="mr-5"><b>15</b> following</span>-->
-                        <!--                            <span><b>30</b> followers</span>-->
-                        <!--                        </v-list-item>-->
+<!--                                                <v-list-item>-->
+<!--                                                    <span class="mr-5"><b>15</b> following</span>-->
+<!--                                                    <span><b>30</b> followers</span>-->
+<!--                                                </v-list-item>-->
                         <v-list-item>
                             <v-card>
-                                <v-card-title class="text-primary">Followers Network</v-card-title>
+                                <v-card-title class="text-primary mb-5">Followers</v-card-title>
                                 <v-row>
-                                    <profile-card v-for="user in users" :user="user"/>
+<!--                                    <profile-card v-for="profile in profiles" :profile="profile"/>-->
                                 </v-row>
                             </v-card>
                         </v-list-item>
@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-import {computed, inject, ref} from "vue";
+import {computed, inject, onMounted, ref} from "vue";
 import ProfileCard from "@/components/ProfileCard.vue";
 import ExperienceForm from "@/components/ExperienceForm.vue";
 import ExperienceData from "@/components/ExperienceData.vue";
@@ -140,6 +140,7 @@ const ENV = inject('ENV')
 const tab = ref(null)
 const profileStore = useProfileStore()
 const isProfileLoading = ref(false)
+const profiles = ref()
 const userProfile = computed(() => {
     return profileStore.getAuthUserProfile
 })
@@ -148,21 +149,19 @@ const selectedCareer = ref(null)
 function handleSelectedCareer(career) {
     selectedCareer.value = career
 }
-const city = computed(()=>{
+
+const city = computed(() => {
     return dz_cities.find(item => item.value == profileStore.getAuthUserProfile.profile.city).text
 })
-const users = [
-    {
-        username: 'ouahab98',
-        name: 'abdelouahab radja',
-        city: 'oran',
-        hospital: 'CHO',
-        department: 'pneumology',
-        occupation: 'assistant',
-        profileImgUrl: 'https://i.pravatar.cc/50',
-        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
-    }
-]
+onMounted(async () => {
+    // await fetchNetworkProfiles()
+})
+
+async function fetchNetworkProfiles() {
+    isProfileLoading.value = true
+    profiles.value = await profileStore.fetchUserProfile(ENV.APP_API_URL, {})
+    isProfileLoading.value = false
+}
 </script>
 
 <style scoped>

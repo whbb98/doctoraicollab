@@ -151,6 +151,7 @@ const people = reactive([])
 const blogForm = reactive({})
 const isBlogLoading = ref(false)
 const blogsStore = useBlogsStore()
+const emit = defineEmits('createBlog')
 
 async function fetchParticipant(search) {
     const data = await (profileStore.fetchUserProfile(ENV.APP_API_URL, {user: search}))
@@ -178,6 +179,7 @@ async function createBlogHandler() {
             blogForm[key] = null
         }
         dialogBlogForm.value = false
+        emit('createBlog')
     }
     isBlogLoading.value = false
 }
