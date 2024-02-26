@@ -1,5 +1,12 @@
 <template>
-    <v-card :loading="isLoadingBlogs">
+    <v-card>
+        <template #loader>
+            <v-progress-linear
+                v-if="isLoadingBlogs"
+                color="primary"
+                :indeterminate="isLoadingBlogs"
+            />
+        </template>
         <v-card-title class="font-weight-bold text-capitalize text-primary">blogs</v-card-title>
         <v-card-text class="d-flex align-center">
             <v-chip-group

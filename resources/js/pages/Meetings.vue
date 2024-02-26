@@ -1,5 +1,12 @@
 <template>
-    <v-card :loading="isMeetingsLoading">
+    <v-card>
+        <template #loader>
+            <v-progress-linear
+            v-if="isMeetingsLoading"
+            color="primary"
+            :indeterminate="isMeetingsLoading"
+            />
+        </template>
         <v-card-title class="font-weight-bold text-capitalize text-primary">meetings</v-card-title>
         <v-card-text class="d-flex align-center">
             <v-chip-group
