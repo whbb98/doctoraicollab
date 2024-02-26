@@ -43,7 +43,7 @@
 import {computed} from "vue";
 
 const props = defineProps(['blog'])
-const maxLength = 100
+const maxLength = 30
 const truncatedDescription = computed(() => {
     if (props.blog.description.length <= maxLength) {
         return props.blog.description
