@@ -21,10 +21,11 @@ class ProfileResource extends JsonResource
         return [
             'user' => new UserResource($this->user),
             'photo' => $this->getPhoto(),
+            'cover' => $this->getCover(),
             'city' => Helper::$dz_cities[$this->city],
             'hospital' => $this->hospital,
             'department' => $this->department,
-            'occupation'=>$this->occupation
+            'occupation' => $this->occupation
         ];
     }
 }

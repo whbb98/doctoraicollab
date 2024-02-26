@@ -1,55 +1,61 @@
 <template>
     <v-card>
+        <template #loader>
+            <v-progress-linear
+                color="primary"
+                v-if="isProfilesLoading"
+                :indeterminate="isProfilesLoading"
+            />
+        </template>
         <v-card-title class="font-weight-bold text-capitalize text-primary">users network</v-card-title>
         <v-card-text>
-            <v-form class="text-capitalize">
+            <v-form @submit.prevent="fetchSearchProfile" class="text-capitalize">
                 <v-row align="center" justify="center">
-                    <v-col cols="12" sm="8" md="10">
+                    <v-col cols="12">
                         <v-text-field
-                            name="search"
+                            v-model="search.user"
                             label="type a username or email"
                             prepend-icon="mdi-account-search"
+                            clearable
                         />
-                    </v-col>
-                    <v-col cols="12" sm="4" md="2" class="d-flex justify-center">
-                        <v-btn color="primary" type="submit">
-                            <v-icon>mdi-magnify</v-icon>
-                            Search
-                        </v-btn>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col cols="12" sm="6" md="3">
                         <v-select
+                            v-model="search.city"
                             prepend-icon="mdi-city"
-                            name="city"
                             label="city"
-                            :items="cities"
-                            item-value="id"
-                            item-title="name"
+                            :items="dz_cities"
+                            item-value="value"
+                            item-title="text"
                             chips
                             color="primary"
+                            clearable
                         />
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
                         <v-text-field
-                            name="hospital"
+                            v-model="search.hospital"
                             label="hospital"
                             prepend-icon="mdi-hospital-building"
+                            clearable
                         />
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
                         <v-text-field
-                            name="department"
+                            v-model="search.department"
                             label="department"
                             prepend-icon="mdi-domain"
+                            clearable
                         />
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
                         <v-text-field
-                            name="occupation"
+                            v-model="search.occupation"
                             label="occupation"
                             prepend-icon="mdi-doctor"
+                            clearable
                         />
                     </v-col>
                 </v-row>
@@ -57,13 +63,13 @@
         </v-card-text>
         <v-card-text>
             <v-card variant="flat">
-                <v-card-title class="text-primary text-capitalize font-weight-bold">
+                <v-card-title class="text-primary text-capitalize font-weight-bold mb-5">
                     <v-icon>mdi-text-search</v-icon>
                     search results:
                 </v-card-title>
                 <v-row>
-                    <v-col v-for="user in users">
-                        <profile-card :user="user" :key="user.username"/>
+                    <v-col v-for="profile in profiles">
+                        <profile-card :profile="profile" :key="profile.user.id"/>
                     </v-col>
                 </v-row>
             </v-card>
@@ -74,7 +80,19 @@
 <script setup>
 
 import ProfileCard from "@/components/ProfileCard.vue";
+import {dz_cities} from "@/utils/constants.js";
+import {inject, onMounted, reactive, ref, watch} from "vue";
+import {useProfileStore} from "@/stores/profileStore.js";
 
+const ENV = inject('ENV')
+const isProfilesLoading = ref(false)
+const search = reactive({
+    user: null,
+    city: null,
+    hospital: null,
+    department: null,
+    occupation: null
+})
 const users = [
     {
         username: 'ouahab98',
@@ -85,50 +103,23 @@ const users = [
         occupation: 'assistant',
         profileImgUrl: 'https://i.pravatar.cc/50',
         profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
-    },
-    {
-        username: 'ouahab15',
-        name: 'abdelouahab radja',
-        city: 'oran',
-        hospital: 'CHO',
-        department: 'pneumology',
-        occupation: 'assistant',
-        profileImgUrl: 'https://i.pravatar.cc/50',
-        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
-    },
-    {
-        username: 'ouahab11',
-        name: 'abdelouahab radja',
-        city: 'oran',
-        hospital: 'CHO',
-        department: 'pneumology',
-        occupation: 'assistant',
-        profileImgUrl: 'https://i.pravatar.cc/50',
-        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
-    },
-    {
-        username: 'ouahab12',
-        name: 'abdelouahab smahi',
-        city: 'oran',
-        hospital: 'CHO',
-        department: 'pneumology',
-        occupation: 'assistant',
-        profileImgUrl: '',
-        profileBackgroundUrl: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg'
     }
 ]
+const profileStore = useProfileStore()
+const profiles = ref()
 
+onMounted(async () => {
+    await fetchSearchProfile()
+})
+watch(search, async () => {
+    await fetchSearchProfile()
+})
 
-const cities = [
-    {
-        id: 31,
-        name: 'Oran'
-    },
-    {
-        id: 32,
-        name: 'El bayadh'
-    }
-]
+async function fetchSearchProfile() {
+    isProfilesLoading.value = true
+    profiles.value = await profileStore.fetchUserProfile(ENV.APP_API_URL, search)
+    isProfilesLoading.value = false
+}
 </script>
 
 <style scoped>
