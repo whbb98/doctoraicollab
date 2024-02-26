@@ -1,7 +1,7 @@
 <template>
     <v-card color="secondary">
         <v-card-title class="pa-0">
-            <v-img height="200" cover :src="blog.backgroundUrl">
+            <v-img height="200" cover :src="blog.cover">
                 <template #placeholder>
                     <div class="d-flex align-center justify-center fill-height">
                         <v-progress-circular
@@ -13,23 +13,23 @@
             </v-img>
         </v-card-title>
         <v-card-text class="text-capitalize mt-3 py-0">
-            <h3 class="mb-2">{{blog.title}}</h3>
+            <h3 class="mb-2">{{ blog.title }}</h3>
             <p class="mb-3">
                 {{ truncatedDescription }}
             </p>
             <span class="d-flex align-center">
                 <v-icon class="mr-1">mdi-calendar</v-icon>
-                {{blog.createdAt}}
+                {{ createdOn }}
             </span>
         </v-card-text>
         <v-card-actions>
             <span class="d-flex align-baseline mr-5">
                 <v-icon class="mr-1">mdi-account-group</v-icon>
-                {{blog.participants}}
+                {{ blog.participants }}
             </span>
             <span class="d-flex align-baseline">
                 <v-icon class="mr-1">mdi-comment-multiple-outline</v-icon>
-                {{blog.comments}}
+                {{ blog.comments }}
             </span>
             <v-spacer/>
             <router-link :to="`/blogs/${blog.id}`" class="text-capitalize text-decoration-none text-primary">read more
@@ -50,6 +50,10 @@ const truncatedDescription = computed(() => {
     } else {
         return props.blog.description.slice(0, maxLength) + '...'
     }
+})
+const createdOn = computed(() => {
+    const date = new Date(props.blog.created_on)
+    return `${date.toDateString()} ${date.getHours()}:${date.getMinutes()}`
 })
 </script>
 

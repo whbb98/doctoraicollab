@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card :loading="isLoadingBlogs">
         <v-card-title class="font-weight-bold text-capitalize text-primary">blogs</v-card-title>
         <v-card-text class="d-flex align-center">
             <v-chip-group
@@ -43,7 +43,7 @@
                 </v-chip>
             </v-chip-group>
             <v-spacer/>
-            <BlogForm/>
+            <BlogForm @create-blog="refreshBlogs"/>
         </v-card-text>
         <v-card-text>
             <v-row>
@@ -60,83 +60,16 @@
 
 <script setup>
 
-import {onMounted, reactive, ref} from "vue";
+import {inject, onMounted, reactive, ref, watch} from "vue";
 import BlogCard from "@/components/BlogCard.vue";
 import BlogForm from "@/components/BlogForm.vue";
+import {useBlogsStore} from "@/stores/blogsStore.js";
 
+const ENV = inject('ENV')
+const blogsStore = useBlogsStore()
 const filterBy = ref('all')
-const blogs = [
-    {
-        id: 10,
-        title: 'hello blog title',
-        backgroundUrl: 'https://picsum.photos/600/200',
-        description: 'Hello iaculis dictas. Deterruissetquaerendum quas instructior placerat perpetua error.\n' +
-            '                Dictumaccusata massa salutatus doming. Aptentvis vidisse putent nonumy noluisse ridiculus cras inimicus\n' +
-            '                pellentesque pharetra alienum voluptatum legere sadipscing. Sapienmovet corrumpit periculis vocent\n' +
-            '                eripuit delectus adversarium liber quaeque varius dui aliquid nominavi suscipiantur potenti civibus dui\n' +
-            '                sonet.',
-        createdAt: new Date().toDateString() + ' ' + '14:16',
-        participants: 12,
-        comments: 19,
-        flag: 'pending'
-    },
-    {
-        id: 11,
-        title: 'hello blog title',
-        backgroundUrl: 'https://picsum.photos/600/200',
-        description: 'Hello iaculis dictas. Deterruissetquaerendum quas instructior placerat perpetua error.\n' +
-            '                Dictumaccusata massa salutatus doming. Aptentvis vidisse putent nonumy noluisse ridiculus cras inimicus\n' +
-            '                pellentesque pharetra alienum voluptatum legere sadipscing. Sapienmovet corrumpit periculis vocent\n' +
-            '                eripuit delectus adversarium liber quaeque varius dui aliquid nominavi suscipiantur potenti civibus dui\n' +
-            '                sonet.',
-        createdAt: new Date().toDateString() + ' ' + '14:16',
-        participants: 12,
-        comments: 19,
-        flag: 'participating'
-    },
-    {
-        id: 12,
-        title: 'hello blog title',
-        backgroundUrl: 'https://picsum.photos/600/200',
-        description: 'Hello iaculis dictas. Deterruissetquaerendum quas instructior placerat perpetua error.\n' +
-            '                Dictumaccusata massa salutatus doming. Aptentvis vidisse putent nonumy noluisse ridiculus cras inimicus\n' +
-            '                pellentesque pharetra alienum voluptatum legere sadipscing. Sapienmovet corrumpit periculis vocent\n' +
-            '                eripuit delectus adversarium liber quaeque varius dui aliquid nominavi suscipiantur potenti civibus dui\n' +
-            '                sonet.',
-        createdAt: new Date().toDateString() + ' ' + '14:16',
-        participants: 12,
-        comments: 19,
-        flag: 'participating'
-    },
-    {
-        id: 13,
-        title: 'hello blog title',
-        backgroundUrl: 'https://picsum.photos/600/200',
-        description: 'Hello iaculis dictas. Deterruissetquaerendum quas instructior placerat perpetua error.\n' +
-            '                Dictumaccusata massa salutatus doming. Aptentvis vidisse putent nonumy noluisse ridiculus cras inimicus\n' +
-            '                pellentesque pharetra alienum voluptatum legere sadipscing. Sapienmovet corrumpit periculis vocent\n' +
-            '                eripuit delectus adversarium liber quaeque varius dui aliquid nominavi suscipiantur potenti civibus dui\n' +
-            '                sonet.',
-        createdAt: new Date().toDateString() + ' ' + '14:16',
-        participants: 12,
-        comments: 19,
-        flag: 'myBlog'
-    },
-    {
-        id: 14,
-        title: 'hello blog title',
-        backgroundUrl: 'https://picsum.photos/600/200',
-        description: 'Hello iaculis dictas. Deterruissetquaerendum quas instructior placerat perpetua error.\n' +
-            '                Dictumaccusata massa salutatus doming. Aptentvis vidisse putent nonumy noluisse ridiculus cras inimicus\n' +
-            '                pellentesque pharetra alienum voluptatum legere sadipscing. Sapienmovet corrumpit periculis vocent\n' +
-            '                eripuit delectus adversarium liber quaeque varius dui aliquid nominavi suscipiantur potenti civibus dui\n' +
-            '                sonet.',
-        createdAt: new Date().toDateString() + ' ' + '14:16',
-        participants: 12,
-        comments: 19,
-        flag: 'participating'
-    }
-]
+const blogs = ref(blogsStore.getBlogs)
+const isLoadingBlogs = ref(false)
 const blogsCount = reactive({
     all: 0,
     myBlog: 0,
@@ -145,15 +78,24 @@ const blogsCount = reactive({
 })
 
 function updateCounters() {
-    blogsCount.all = blogs.length
-    blogsCount.pending = blogs.filter(blog => blog.flag === 'pending').length
-    blogsCount.participating = blogs.filter(blog => blog.flag === 'participating').length
-    blogsCount.myBlog = blogs.filter(blog => blog.flag === 'myBlog').length
+    blogsCount.all = blogs.value.length
+    blogsCount.pending = blogs.value.filter(blog => blog.flag === 'pending').length
+    blogsCount.participating = blogs.value.filter(blog => blog.flag === 'participating').length
+    blogsCount.myBlog = blogs.value.filter(blog => blog.flag === 'myBlog').length
 }
 
-onMounted(() => {
-    updateCounters()
+onMounted(async () => {
+    await refreshBlogs()
 })
+
+async function refreshBlogs() {
+    isLoadingBlogs.value = true
+    blogs.value = []
+    await blogsStore.fetchBlogs(ENV.APP_API_URL)
+    blogs.value = blogsStore.getBlogs
+    updateCounters()
+    isLoadingBlogs.value = false
+}
 </script>
 
 <style scoped>
