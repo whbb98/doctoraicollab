@@ -14,7 +14,7 @@ class Base64Format extends Model
     private $extension;
     private $name;
 
-    function __construct($binary, $fname, $fextension)
+    function __construct($binary, $fname = null, $fextension = null)
     {
         if (!$binary) return null;
 

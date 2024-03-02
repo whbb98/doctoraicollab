@@ -47,7 +47,7 @@ class BlogResource extends JsonResource
             'participants' => count(new BlogParticipantCollection($this->blogParticipants)),
             'comments' => count($this->blogComments),
             'flag' => $flag,
-            'cover' => (new Base64Format($this->blogImages[0]['image_binary'], null, null))->getBase64()
+            'cover' => (new Base64Format($this->blogImages[0]['image_binary']))->getBase64()
         ];
     }
 }

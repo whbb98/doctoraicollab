@@ -16,9 +16,9 @@ import {useMainStore} from "@/stores/mainStore.js";
 
 const mainStore = useMainStore()
 const ENV = {
-    APP_URL: import.meta.env.VITE_APP_URL,
     APP_API_URL: import.meta.env.VITE_APP_API_URL,
-    getCsrfToken: getCsrfToken()
+    AI_API_URL: import.meta.env.VITE_AI_API_URL,
+    getCsrfToken: getCsrfToken(),
 }
 provide('ENV', ENV)
 const notificationsStore = useNotificationsStore()
