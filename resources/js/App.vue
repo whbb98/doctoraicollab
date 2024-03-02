@@ -2,7 +2,7 @@
     <v-app>
         <router-view/>
         <v-footer order="0" app color="dark">
-            <h1>footer</h1>
+            <span><b>Dr AI Collab</b> is a web application which helps doctors to collaborate with each others towards making a better diagnosis for our patients.</span>
         </v-footer>
         <popup-snackbar :data="popupData"/>
     </v-app>

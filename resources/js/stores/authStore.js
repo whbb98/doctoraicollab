@@ -5,8 +5,8 @@ import {useProfileStore} from "@/stores/profileStore.js";
 
 export const useAuthStore = defineStore('authStore', {
     state: () => ({
-        user: null,
-        token: null,
+        user: JSON.parse(localStorage.getItem('authUser')) || null,
+        token: localStorage.getItem('authToken') || null,
     }),
     getters: {
         getAuthToken() {
@@ -38,6 +38,8 @@ export const useAuthStore = defineStore('authStore', {
                 } else {
                     this.token = data.auth_token
                     this.user = data.auth_user
+                    localStorage.setItem('authToken', data.auth_token)
+                    localStorage.setItem('authUser', JSON.stringify(data.auth_user))
                     notificationsStore.setPopupNotification({
                         open: true,
                         type: 'success',
@@ -74,6 +76,8 @@ export const useAuthStore = defineStore('authStore', {
                 } else {
                     this.user = null
                     this.token = null
+                    localStorage.removeItem('authToken')
+                    localStorage.removeItem('authUser')
                     this.$router.push('/login')
                     notificationsStore.setPopupNotification({
                         open: true,
