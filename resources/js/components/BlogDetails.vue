@@ -1,8 +1,17 @@
 <template>
-    <v-card>
+    <v-overlay :model-value="isBlogLoading" class="align-center justify-center">
+        <p class="text-white text-capitalize">loading blog data...</p>
+        <v-progress-linear
+            height="5"
+            rounded
+            color="primary"
+            indeterminate
+        />
+    </v-overlay>
+    <v-card :class="{'d-none':isBlogLoading}">
         <v-card-title class="text-capitalize font-weight-bold text-primary">
             <v-row class="pa-4">
-                this is blog title: {{ route.fullPath }}
+                {{ blog.title }}
                 <v-spacer/>
                 <v-btn rounded
                        color="primary"
@@ -14,31 +23,31 @@
             </v-row>
         </v-card-title>
         <v-card-text>
-            <span class="mr-5">
+            <span class="mr-5 text-capitalize">
                 <v-icon>mdi-account</v-icon>
-                John Doe
+                {{ blog?.author?.firstName + ' ' + blog?.author?.lastName }}
             </span>
             <span>
                 <v-icon>mdi-calendar</v-icon>
-                2021 Jan 12 14:32
+                {{ blog.created_on }}
             </span>
         </v-card-text>
         <v-container class="border">
             <v-row class="blog">
                 <v-col class="h-100 overflow-y-auto" cols="2" md="3" xl="2">
-                    <v-list v-model="selectedP">
+                    <v-list v-model="selectedParticipant">
                         <v-list-item
                             class="rounded-xl"
-                            v-for="p in participants"
+                            v-for="p in blog.participants"
                             :key="p.username"
                             :value="p.username"
                             color="primary"
                             @click="chooseP(p)"
-                            :active="selectedP === p.username"
+                            :active="selectedParticipant === p.username"
                         >
                             <template #prepend>
                                 <v-avatar class="mr-2" color="secondary" size="50" :image="p.avatar">
-                                    <span class="text-h5 text-uppercase">{{ p.nameAbbr }}</span>
+                                    <span class="text-h5 text-uppercase">{{ p.abbreviatedName }}</span>
                                 </v-avatar>
                             </template>
                             <div class="d-none d-md-block">
@@ -46,39 +55,45 @@
                                     class="text-capitalize"
                                     :class="activeClasses(p)"
                                 >
-                                    {{ p.name }}
+                                    {{ p.firstName + ' ' + p.lastName }}
                                 </v-list-item-title>
                                 <v-list-item-subtitle :class="activeClasses(p)">
                                     {{ p.username }}
                                 </v-list-item-subtitle>
                             </div>
                             <v-tooltip class="d-lg-none" activator="parent" location="right">
-                                <span class="text-capitalize">{{ p.name }}</span>
+                                <span class="text-capitalize">{{ p.firstName + ' ' + p.lastName }}</span>
                             </v-tooltip>
                         </v-list-item>
                     </v-list>
                 </v-col>
                 <v-col style="height: 500px" cols="10" md="9" xl="10">
-                    <anno-viewer viewer-id="annoViewer"
-                                 :img-url="xrayImg"
+                    <anno-viewer v-if="currentImage"
+                                 viewer-id="annoViewer"
+                                 :blogID="blog.id"
+                                 :image="currentImage"
+                                 :user="selectedParticipantObj"
                                  :drawingTool="drawingTool"
                                  :isAnnoVisible="isAnnoVisible"
+                                 @create-annotation="updateImageAnnotationsHandler"
+                                 @delete-annotation="updateImageAnnotationsHandler"
+                                 @update-annotation="updateImageAnnotationsHandler"
                     />
                 </v-col>
                 <v-col cols="12">
                     <v-row justify="center">
                         <v-col md="4" lg="3" xl="2"
                                class="d-flex align-center justify-space-around justify-md-space-between">
-                            <v-btn variant="outlined" rounded color="primary">
+                            <v-btn @click="currentImageIdx--" variant="outlined" rounded color="primary">
                                 <v-icon>mdi-arrow-left</v-icon>
                                 <v-tooltip activator="parent" location="top">
                                     go back
                                 </v-tooltip>
                             </v-btn>
                             <v-chip variant="elevated" color="primary">
-                                {{ 1 }}
+                                {{ currentImageIdx + 1 }} / {{ blogImagesCount }}
                             </v-chip>
-                            <v-btn variant="outlined" rounded color="primary">
+                            <v-btn @click="currentImageIdx++" variant="outlined" rounded color="primary">
                                 <v-icon>mdi-arrow-right</v-icon>
                                 <v-tooltip activator="parent" location="top">
                                     go next
@@ -154,30 +169,7 @@
                 description
             </v-card-title>
             <v-card-text>
-                <p>
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-                    et
-                    ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem
-                    ipsum
-                    dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-                    dolore
-                    magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-                    Stet
-                    clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-                    amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-                    clita
-                    kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-
-                    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum
-                    dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit
-                    praesent
-                    luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,
-                    consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-                    aliquam
-                    erat volutpat.
-                </p>
+                <p>{{ blog.description }}</p>
             </v-card-text>
         </v-card-text>
         <v-card-text>
@@ -192,11 +184,17 @@
                     <v-expansion-panel-text>
                         <!--                        <v-progress-linear indeterminate rounded color="primary"/>-->
                         <v-alert
-                            v-if="AIModelResponse.accuracy < 60"
+                            v-if="AIModelsData.accuracy < 50"
                             title="Model Accuracy"
-                            :text="`Accuracy of the AI model is: ${AIModelResponse.accuracy}%`"
+                            :text="`Accuracy of the AI model is: ${AIModelsData.accuracy}%`"
                             type="warning"
                             closable
+                        />
+                        <v-select prepend-icon="mdi-robot"
+                                  label="Choose Prediction Model"
+                                  :items="Object.keys(AIModelsData)"
+                                  v-model="selectedAIModel"
+                                  :loading="isPredictionsLoading"
                         />
                         <v-table hover>
                             <thead>
@@ -206,7 +204,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(item,key) in AIModelResponse.predictions">
+                            <tr v-for="(item,key) in AIPredictions">
                                 <td>{{ key }}</td>
                                 <td>
                                     <v-progress-linear
@@ -237,7 +235,8 @@
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
                         <v-row>
-                            <v-col cols="12" class="d-flex align-center justify-space-between">
+                            <v-col v-if="blog?.author.id === authStore.getUser?.id" cols="12"
+                                   class="d-flex align-center justify-space-between">
                                 <span class="text-capitalize font-weight-bold text-primary">
                                     update feedback
                                 </span>
@@ -245,18 +244,18 @@
                                     <v-icon>mdi-square-edit-outline</v-icon>
                                     update
                                     <blog-feedback-form
-                                        @update-feedback="data => feedbackData = data"
+                                        @update-feedback="updateFeedbackHandler"
                                     />
                                 </v-btn>
                             </v-col>
-                            <v-col cols="12">
+                            <v-col cols="12" class="mt-5">
                                 <v-row class="feedback-header text-capitalize font-weight-bold bg-secondary rounded">
                                     <v-col cols="2">ICD class</v-col>
                                     <v-col>description</v-col>
                                     <v-col>votes %</v-col>
                                 </v-row>
                                 <v-row
-                                    v-for="item in feedbackData"
+                                    v-for="item in feedbackLabels"
                                     class="vote-row text-capitalize d-flex align-center rounded"
                                     :class="isVoted === item.id? 'bg-dark':''"
                                     v-model="isVoted"
@@ -276,7 +275,7 @@
                                             rounded
                                         >
                                             <template #default="{value}">
-                                                <strong>{{ Math.ceil(value) }}%</strong>
+                                                <strong>{{ value }}%</strong>
                                             </template>
                                         </v-progress-linear>
                                     </v-col>
@@ -291,15 +290,15 @@
                                     <v-icon>mdi-content-save</v-icon>
                                     vote
                                 </v-btn>
-                                <v-btn class="text-capitalize"
-                                       color="warning"
-                                       rounded
-                                       variant="outlined"
-                                       @click="clearVote"
-                                >
-                                    <v-icon>mdi-cancel</v-icon>
-                                    unvote
-                                </v-btn>
+                                <!--                                <v-btn class="text-capitalize"-->
+                                <!--                                       color="warning"-->
+                                <!--                                       rounded-->
+                                <!--                                       variant="outlined"-->
+                                <!--                                       @click="clearVote"-->
+                                <!--                                >-->
+                                <!--                                    <v-icon>mdi-cancel</v-icon>-->
+                                <!--                                    unvote-->
+                                <!--                                </v-btn>-->
                             </v-col>
                         </v-row>
                     </v-expansion-panel-text>
@@ -316,6 +315,8 @@
                                 name="comment"
                                 label="leave a comment"
                                 v-model="comment"
+                                clearable
+                                @click:clear="clearComment"
                             />
                             <v-btn type="submit" color="primary" rounded>
                                 comment
@@ -326,8 +327,10 @@
                         <v-row class="comments">
                             <v-col cols="12">
                                 <user-comment-card
-                                    v-for="item in userComments"
-                                    :comment="item"
+                                    v-for="comment in blogComments"
+                                    :comment="comment"
+                                    @update-comment="updateComment"
+                                    @delete-comment="deleteComment"
                                 />
                             </v-col>
                         </v-row>
@@ -340,137 +343,170 @@
 
 <script setup>
 import {useRoute} from "vue-router";
-import {computed, ref, watch} from "vue";
+import {computed, inject, onBeforeMount, onMounted, reactive, ref, watch} from "vue";
 import AnnoViewer from "@/components/AnnoViewer.vue";
 import BlogFeedbackForm from "@/components/BlogFeedbackForm.vue";
 import UserCommentCard from "@/components/UserCommentCard.vue";
+import {useBlogsStore} from "@/stores/blogsStore.js";
+import router from "@/router.js";
+import {useAuthStore} from "@/stores/authStore.js";
+import {useNotificationsStore} from "@/stores/notificationsStore.js";
 
-const xrayImg = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Normal_posteroanterior_%28PA%29_chest_radiograph_%28X-ray%29.jpg/800px-Normal_posteroanterior_%28PA%29_chest_radiograph_%28X-ray%29.jpg'
+const isBlogLoading = ref(false)
+const blogsStore = useBlogsStore()
+const authStore = useAuthStore()
 const route = useRoute()
+const ENV = inject('ENV')
+const blog = ref({})
+const currentImageIdx = ref(0)
+let blogImagesCount = 0
+const currentImage = ref(null)
+const selectedParticipant = ref(null)
+const selectedParticipantObj = ref(null)
 const isAnnoVisible = ref(true)
 const drawingTool = ref('rect')
-const participants = [
-    {
-        id: 45,
-        username: 'ouahab98',
-        name: 'abdelouahab radja',
-        nameAbbr: 'ar',
-        // avatar: 'https://i.pravatar.cc/50'
-    },
-    {
-        id: 1,
-        username: 'user01',
-        name: 'john doe 1',
-        nameAbbr: 'jd',
-        avatar: 'https://i.pravatar.cc/50'
-    },
-    {
-        id: 2,
-        username: 'user02',
-        name: 'john doe 2',
-        nameAbbr: 'af',
-        avatar: 'https://i.pravatar.cc/50'
-    },
-    {
-        id: 3,
-        username: 'user03',
-        name: 'john doe 3',
-        nameAbbr: 'er',
-        avatar: 'https://i.pravatar.cc/50'
-    }
-]
-const selectedP = ref(participants[0].username)
 const activeClasses = (p) => {
-    return p.username === selectedP.value ? 'font-weight-bold' : ''
+    return p.username === selectedParticipant.value ? 'font-weight-bold' : ''
 }
+onBeforeMount(async () => {
+    isBlogLoading.value = true
+    const data = await blogsStore.fetchBlogData(ENV.APP_API_URL, route.params.blogID)
+    if (data === false) {
+        router.push('/blogs')
+        return
+    }
+    blog.value = data
+    isBlogLoading.value = false
+    initBlog()
+    await fetchAIModelsInfo()
+})
+
+async function initBlog() {
+    selectedParticipant.value = blog.value.participants[0].username
+    selectedParticipantObj.value = blog.value.participants[0]
+    currentImage.value = blog.value.images[currentImageIdx.value]
+    blogImagesCount = blog.value.images.length
+    blogComments.value = await blogsStore.fetchComments(ENV.APP_API_URL, route.params.blogID)
+    await refreshFeedback()
+}
+
+watch(currentImageIdx, async (value, oldValue) => {
+    if (value < 0 || value >= blogImagesCount) {
+        currentImageIdx.value = oldValue
+        return
+    }
+    currentImage.value = blog.value.images[currentImageIdx.value]
+    await fetchAIPredictions()
+})
 
 function chooseP(p) {
-    selectedP.value = p.username;
+    selectedParticipant.value = p.username
+    selectedParticipantObj.value = p
 }
 
-watch(selectedP, (newVal, oldValue) => {
-    console.log(newVal, oldValue)
-})
+async function updateImageAnnotationsHandler(annotation) {
+    await blogsStore.storeAnnotation(ENV.APP_API_URL, blog.value.id, currentImage.value.id, annotation)
+}
 
-const AIModelResponse = {
-    accuracy: 86,
-    predictions: {
-        class01: 15.6,
-        class02: 24.6,
-        class03: 15.6,
-        class04: 54,
-        class05: 40,
-        class06: 33
+const blogComments = ref([])
+const comment = ref(null)
+const selectedCommentID = ref(null)
+
+async function commentNow() {
+    const status = await blogsStore.storeComment(ENV.APP_API_URL, route.params.blogID, selectedCommentID.value, comment.value)
+    if (status) {
+        blogComments.value = await blogsStore.fetchComments(ENV.APP_API_URL, route.params.blogID)
+        selectedCommentID.value = null
+        comment.value = null
     }
 }
-const feedbackData = ref([])
-const feedbackVotes = []
+
+async function updateComment(id, text) {
+    selectedCommentID.value = id
+    comment.value = text
+}
+
+async function deleteComment(id) {
+    const status = await blogsStore.deleteComment(ENV.APP_API_URL, route.params.blogID, id)
+    if (status) {
+        blogComments.value = await blogsStore.fetchComments(ENV.APP_API_URL, route.params.blogID)
+    }
+}
+
+function clearComment() {
+    selectedCommentID.value = null
+    comment.value = null
+}
+
+const feedbackLabels = ref([])
+const feedbackVotes = ref([])
+
+async function refreshFeedback() {
+    const data = await blogsStore.fetchBlogFeedback(ENV.APP_API_URL, route.params.blogID)
+    if (data) {
+        feedbackLabels.value = JSON.parse(data.labels)
+        feedbackVotes.value = await blogsStore.getFeedbackVotes(ENV.APP_API_URL, route.params.blogID)
+        isVoted.value = feedbackVotes.value.find(item => item.voted_by === authStore.getUser.id).answer
+    }
+}
+
+async function updateFeedbackHandler(data) {
+    const status = await blogsStore.storeBlogFeedback(ENV.APP_API_URL, route.params.blogID, data)
+    if (status) {
+        await refreshFeedback()
+    }
+}
 
 function voteRatio(id) {
-    return (feedbackVotes.filter(item => item.answer === id).length) / (feedbackData.value.length) * 100
+    const votesPerID = feedbackVotes.value.filter(item => item.answer === id).length
+    // const totalChoises = feedbackLabels.value.length
+    const totalChoises = feedbackVotes.value.length
+    return Math.floor((votesPerID / totalChoises) * 100)
 }
 
-const isVoted = ref('D701')
-watch(isVoted, newVal => {
-    console.log(newVal)
-})
+const isVoted = ref(null)
 
-function clearVote() {
-    isVoted.value = null
-}
-
-function saveVote() {
+async function saveVote() {
     if (isVoted.value) {
-        console.log('you chose: ', isVoted.value)
+        await blogsStore.storeFeedbackVote(ENV.APP_API_URL, route.params.blogID, isVoted.value)
+        await refreshFeedback()
     } else {
-        console.log('plz vote now!')
+        const notificationsStore = useNotificationsStore()
+        notificationsStore.setPopupNotification({
+            open: true,
+            type: 'error',
+            title: 'Feedback vote!',
+            message: 'please choose a label!'
+        })
     }
 }
 
-const userComments = ref([
-    {
-        id: 1,
-        username:'ouahab98',
-        abbreviatedName: 'AR',
-        fullName: 'abdelouahab radja',
-        avatar: 'https://i.pravatar.cc/50',
-        datetime: new Date().toDateString() + '14:52',
-        comment: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
-    },
-    {
-        id: 2,
-        username:'amine31',
-        abbreviatedName: 'AS',
-        fullName: 'amine smahi',
-        avatar: 'https://i.pravatar.cc/50',
-        datetime: new Date().toDateString() + '14:52',
-        comment: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
-    },
-    {
-        id: 3,
-        username:'osmbonnor',
-        abbreviatedName: 'ob',
-        fullName: 'oussama bonnor',
-        // avatar: 'https://i.pravatar.cc/50',
-        datetime: new Date().toDateString() + '14:52',
-        comment: 'Etiamefficitur electram oporteat dolor tempor definiebas qui posidonium venenatis aliquip dicta dico aliquet persequeris felis. Duoviverra tempor. Anteesse cum populo fringilla nobis populo.',
-    }
-])
-const comment = ref(null)
+const AIModelsData = ref({})
+const AIPredictions = ref({})
+const selectedAIModel = ref(null)
+const isPredictionsLoading = ref(false)
 
-function commentNow() {
-    userComments.value.push(
-        {
-            id: 1,
-            nameAbbr: 'NW',
-            fullName: 'user now',
-            avatar: 'https://i.pravatar.cc/50',
-            commentDate: new Date().toDateString(),
-            commentText: comment.value
-        }
-    )
+async function fetchAIModelsInfo() {
+    isPredictionsLoading.value = true
+    AIModelsData.value = await blogsStore.fetchAIModelsInfo(ENV.AI_API_URL)
+    isPredictionsLoading.value = false
 }
 
+async function fetchAIPredictions() {
+    const data = await blogsStore.fetchAIPredictions(
+        ENV.AI_API_URL,
+        AIModelsData.value[selectedAIModel.value].predict,
+        currentImage.value.base64)
+    if (data) {
+        AIPredictions.value = data
+    } else {
+        AIPredictions.value = {}
+    }
+}
+
+watch(selectedAIModel, async (selectedModel) => {
+    await fetchAIPredictions()
+})
 </script>
 
 <style scoped>

@@ -19,6 +19,10 @@ class BlogFeedbackRequest extends FormRequest
         if (!$blog) {
             return false;
         }
+        $participantsIDs = array_map(fn($p) => $p['user_id'], $blog->blogParticipants->toArray());
+        if ($this->method() === 'GET' && in_array(Auth::user()->id, $participantsIDs)) {
+            return true;
+        }
         return $blog->user_id == Auth::user()->id;
     }
 
@@ -29,25 +33,31 @@ class BlogFeedbackRequest extends FormRequest
      */
     public function rules(): array
     {
-        $icd10_codes = App::make('icd10_codes');
-        return [
-            'feedback_options' => ['required', 'array'],
-            'feedback_options.*' => ['distinct', Rule::in(array_column($icd10_codes, 'id'))]
-        ];
+        if ($this->method() === 'POST') {
+            $icd10_codes = App::make('icd10_codes');
+            return [
+                'feedback_options' => ['required', 'array'],
+                'feedback_options.*' => ['distinct', Rule::in(array_column($icd10_codes, 'id'))]
+            ];
+        } else {
+            return [];
+        }
     }
 
     protected function passedValidation()
     {
-        $icd10_codes = App::make('icd10_codes');
-        $user_codes = $this->feedback_options;
+        if ($this->method() === 'POST') {
+            $icd10_codes = App::make('icd10_codes');
+            $user_codes = $this->feedback_options;
 
-        $filteredData = array_filter($icd10_codes, function ($icd10) use ($user_codes) {
-            return in_array($icd10['id'], $user_codes);
-        });
+            $filteredData = array_filter($icd10_codes, function ($icd10) use ($user_codes) {
+                return in_array($icd10['id'], $user_codes);
+            });
 
-        $this->merge([
-            'user_id' => Auth::user()->id,
-            'labels' => array_values($filteredData)
-        ]);
+            $this->merge([
+                'user_id' => Auth::user()->id,
+                'labels' => array_values($filteredData)
+            ]);
+        }
     }
 }

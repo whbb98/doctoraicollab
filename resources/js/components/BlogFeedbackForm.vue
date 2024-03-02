@@ -92,21 +92,31 @@
 </template>
 
 <script setup>
-import {computed, inject, reactive, ref, watch} from "vue";
+import {computed, inject, onMounted, reactive, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import axios from "axios";
+import {useBlogsStore} from "@/stores/blogsStore.js";
 
 const emit = defineEmits(['updateFeedback'])
 const route = useRoute()
+const blogsStore = useBlogsStore()
 const feedbackDialog = ref(false)
 const ENV = inject('ENV')
-const ICD_AUTO_COMPLETE_URL = ENV.APP_API + 'blogs/' + route.params.blogID + '/icd10_auto_complete'
-const token = ENV.AUTH_TOKEN
 const ICDQuery = ref('')
 const ICDSelectedList = ref([])
 const ICDSuggestionList = ref([])
 const isLoadingSuggestions = ref(false)
 const ICDSelectedChips = ref([])
+
+onMounted(async () => {
+    await refreshFeedbackData()
+})
+
+async function refreshFeedbackData() {
+    const data = await blogsStore.fetchBlogFeedback(ENV.APP_API_URL, route.params.blogID)
+    ICDSelectedList.value = JSON.parse(data.labels)
+    ICDSelectedChips.value = JSON.parse(data.labels)
+}
 
 function addICDChip(item) {
     ICDSelectedChips.value.push(item)
@@ -128,24 +138,20 @@ function clearFeedback(isAll) {
     }
 }
 
-function loadICDSuggestions() {
-    isLoadingSuggestions.value = true
-    ICDSuggestionList.value = []
-    axios.get(ICD_AUTO_COMPLETE_URL, {
-        headers: {Authorization: `Bearer ${token}`},
-        params: {q: ICDQuery.value}
-    }).then(response => {
-        ICDSuggestionList.value.push(...response.data)
-        isLoadingSuggestions.value = false
-    }).catch(error => {
-        console.error("Error while fetching data", error)
-        isLoadingSuggestions.value = false
-    })
+async function loadICDSuggestions() {
+    const data = await blogsStore.fetchICDAutoSuggestions(ENV.APP_API_URL, route.params.blogID, ICDQuery.value)
+    if (data) {
+        ICDSuggestionList.value = []
+        ICDSuggestionList.value.push(...data)
+    } else {
+        ICDSuggestionList.value = []
+    }
 }
 
-function saveFeedback() {
+async function saveFeedback() {
     emit('updateFeedback', ICDSelectedChips.value)
     feedbackDialog.value = false
+    await refreshFeedbackData()
 }
 </script>
 

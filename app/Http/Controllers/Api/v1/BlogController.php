@@ -13,6 +13,7 @@ use App\Http\Requests\v1\ImagePredictionsRequest;
 use App\Http\Requests\v1\UpdateBlogRequest;
 use App\Http\Resources\v1\BlogCollection;
 use App\Http\Resources\v1\BlogDetailsResource;
+use App\Http\Resources\v1\UserResource;
 use App\Models\Blog;
 use App\Models\BlogComments;
 use App\Models\BlogFeedback;
@@ -21,6 +22,7 @@ use App\Models\BlogParticipate;
 use App\Models\MLPredictions;
 use App\Models\User;
 use App\Models\UserAnnotations;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -318,7 +320,13 @@ class BlogController extends Controller
             ];
         }
         if ($request->method() == 'GET') {
-            return $blog->blogComments;
+            $comments = [];
+            foreach ($blog->blogComments->sortByDesc('datetime')->toArray() as $item) {
+                $item['user'] = new UserResource(User::find($item['user_id']));
+                $item['datetime'] = Carbon::parse($item['datetime'])->format('D m Y H:i');
+                $comments[] = $item;
+            }
+            return $comments;
         } else
             if ($request->method() == 'POST') {
                 $comment = BlogComments::find($request->comment_id);
@@ -374,17 +382,24 @@ class BlogController extends Controller
             ];
         }
         $blog_feedback = $blog->blogFeedback;
-        if (!$blog_feedback) {
-            $blog_feedback = $blog->blogFeedback()->create(['labels' => json_encode($request->labels)]);
-            return [
-                'success' => 'blog feedback created successfully!'
-            ];
-        } else {
-            $blog_feedback->update(['labels' => json_encode($request->labels)]);
-            return [
-                'success' => 'blog feedback updated successfully!'
-            ];
-        }
+        if ($request->method() === 'GET') {
+            $data = $blog_feedback->toArray();
+            $data['votes'] = $blog_feedback->feedbackData;
+            return $data;
+        } else
+            if ($request->method() === 'POST') {
+                if (!$blog_feedback) {
+                    $blog_feedback = $blog->blogFeedback()->create(['labels' => json_encode($request->labels)]);
+                    return [
+                        'success' => 'blog feedback created successfully!'
+                    ];
+                } else {
+                    $blog_feedback->update(['labels' => json_encode($request->labels)]);
+                    return [
+                        'success' => 'blog feedback updated successfully!'
+                    ];
+                }
+            }
     }
 
     public function icd10AutoComplete(Request $request)

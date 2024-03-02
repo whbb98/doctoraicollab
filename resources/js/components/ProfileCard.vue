@@ -24,17 +24,17 @@
                     </v-list>
                 </v-card-text>
                 <v-card-actions class="py-0">
-                    <router-link :to="`/profile/view/${profile.user.username}`">
-                        <v-btn color="primary" class="text-capitalize" prepend-icon="mdi-card-account-details">view
-                        </v-btn>
-                    </router-link>
-                    <v-btn class="text-capitalize" prepend-icon="mdi-plus-circle">
+                    <v-btn color="primary"
+                           class="text-capitalize"
+                           prepend-icon="mdi-card-account-details">
+                        view
+                    </v-btn>
+                    <v-btn class="text-capitalize"
+                           prepend-icon="mdi-plus-circle">
                         follow
                     </v-btn>
                     <v-btn class="text-capitalize"
-                           prepend-icon="mdi-message"
-                           @click="console.log('messaging is not supported !')"
-                    >
+                           prepend-icon="mdi-message">
                         message
                     </v-btn>
                 </v-card-actions>

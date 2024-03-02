@@ -1,21 +1,23 @@
 <template>
     <v-card-text>
         <v-card-title>
-            <v-avatar class="mr-2" color="secondary" size="50" :image="comment?.avatar">
-                <span class="text-h5 text-uppercase">{{ comment.abbreviatedName }}</span>
+            <v-avatar class="mr-2" color="secondary" size="50" :image="comment?.user.avatar">
+                <span class="text-h5 text-uppercase">{{ comment.user.abbreviatedName }}</span>
             </v-avatar>
-            <span class="text-capitalize">{{ comment.fullName }}</span>
+            <span class="text-capitalize">
+                {{ comment.user.firstName + ' ' +comment.user.lastName }}
+            </span>
         </v-card-title>
         <v-card-subtitle>{{ comment.datetime }}</v-card-subtitle>
         <v-card-text>
             {{ comment.comment }}
-            <v-btn v-if="comment.username === authStore.getUser.username"
+            <v-btn v-if="comment.user.username === authStore?.getUser?.username"
                    class="mr-1"
                    icon="mdi-pencil-outline"
                    color="primary"
                    size="30"
                    @click="updateComment(comment.id,comment.comment)"/>
-            <v-btn v-if="comment.username === authStore.getUser.username"
+            <v-btn v-if="comment.user.username === authStore?.getUser?.username"
                    icon="mdi-delete"
                    color="error"
                    size="30"
@@ -38,6 +40,7 @@ function updateComment(id, text) {
 function deleteComment(id) {
     emit('deleteComment', id)
 }
+
 </script>
 
 <style scoped>

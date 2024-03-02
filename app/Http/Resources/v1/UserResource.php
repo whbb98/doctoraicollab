@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'username' => $this->username,
             'firstName' => $this->first_name,
             'lastName' => $this->last_name,
+            'abbreviatedName' => $this->first_name[0] . $this->last_name[0],
             'joined' => Carbon::parse($this->joined)->format('d-M-Y'),
             'isActive' => $this->is_active ? 'Identified' : 'not identified yet',
             'gender' => $this->gender,
